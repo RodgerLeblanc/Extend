@@ -15,6 +15,7 @@
  */
 
 #include "service.hpp"
+#include "src/ImageFileSignatureChecker/ImageFileSignatureChecker.h"
 
 #include <bb/Application>
 #include <bb/platform/Notification>
@@ -28,17 +29,20 @@ Service::Service() :
         QObject(),
 //        notify(new Notification(this)),
         invokeManager(new InvokeManager(this)),
-        folderWatcher(new FolderWatcher::FolderWatcher(this)),
+        folderWatcher(new FolderWatcher(this)),
         headlessCommunication(new HeadlessCommunication(this))
 {
     invokeManager->connect(invokeManager, SIGNAL(invoked(const bb::system::InvokeRequest&)),
             this, SLOT(handleInvoke(const bb::system::InvokeRequest&)));
 
     connect(headlessCommunication, SIGNAL(receivedData(QString)), this, SLOT(onReceivedData(QString)));
+    connect(folderWatcher, SIGNAL(imageWithoutExtensionFound(const QString&)), this, SLOT(onImageWithoutExtensionFound(const QString&)));
 
     NotificationDefaultApplicationSettings settings;
     settings.setPreview(NotificationPriorityPolicy::Allow);
     settings.apply();
+
+    folderWatcher->addFolder("/accounts/1000/removable/sdcard/photos/");
 }
 
 void Service::handleInvoke(const bb::system::InvokeRequest & request)
@@ -48,6 +52,17 @@ void Service::handleInvoke(const bb::system::InvokeRequest & request)
     if (action == "SHUTDOWN") {
         bb::Application::instance()->quit();
     }
+}
+
+void Service::onImageWithoutExtensionFound(const QString& filePath) {
+    qDebug() << "onImageWithoutExtensionFound():" << filePath;
+
+    ImageFileSignatureChecker* imageFileSignatureChecker = new ImageFileSignatureChecker(filePath, this);
+    ImageFileType::ImageFileType imageFileType = imageFileSignatureChecker->getImageFileType();
+    QString newFilePath = imageFileSignatureChecker->setImageExtension(imageFileType);
+    imageFileSignatureChecker->deleteLater();
+
+    qDebug() << "newFilePath" << newFilePath;
 }
 
 void Service::onReceivedData(QString data) {

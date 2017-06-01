@@ -41,13 +41,14 @@ public:
 
 private slots:
     void handleInvoke(const bb::system::InvokeRequest &);
+    void onImageWithoutExtensionFound(const QString&);
     void onReceivedData(QString);
 
 private:
 //    bb::platform::Notification* notify;
     bb::system::InvokeManager* invokeManager;
 
-    FolderWatcher::FolderWatcher* folderWatcher;
+    FolderWatcher* folderWatcher;
     HeadlessCommunication* headlessCommunication;
 };
 

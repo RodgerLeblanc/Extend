@@ -38,6 +38,7 @@ config_pri_source_group1 {
     SOURCES += \
         $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.cpp) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.cpp) \
+        $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.cpp) \
         $$quote($$BASEDIR/src/Settings/Settings.cpp) \
         $$quote($$BASEDIR/src/main.cpp) \
         $$quote($$BASEDIR/src/service.cpp)
@@ -45,6 +46,7 @@ config_pri_source_group1 {
     HEADERS += \
         $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.h) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.h) \
+        $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.h) \
         $$quote($$BASEDIR/src/Logger/HeapUsage/HeapUsage.h) \
         $$quote($$BASEDIR/src/Logger/Logger.h) \
         $$quote($$BASEDIR/src/Settings/Settings.h) \
@@ -73,6 +75,11 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.cc) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.cpp) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.cxx) \
+        $$quote($$BASEDIR/../src/ImageFileSignatureChecker/*.c) \
+        $$quote($$BASEDIR/../src/ImageFileSignatureChecker/*.c++) \
+        $$quote($$BASEDIR/../src/ImageFileSignatureChecker/*.cc) \
+        $$quote($$BASEDIR/../src/ImageFileSignatureChecker/*.cpp) \
+        $$quote($$BASEDIR/../src/ImageFileSignatureChecker/*.cxx) \
         $$quote($$BASEDIR/../src/Logger/*.c) \
         $$quote($$BASEDIR/../src/Logger/*.c++) \
         $$quote($$BASEDIR/../src/Logger/*.cc) \

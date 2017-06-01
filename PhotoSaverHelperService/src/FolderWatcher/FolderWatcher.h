@@ -13,28 +13,31 @@
 #include <QObject>
 #include <QFileSystemWatcher>
 
-namespace FolderWatcher
+class FolderWatcher : public QObject
 {
+    Q_OBJECT
 
-    class FolderWatcher : public QObject
-    {
-        Q_OBJECT
+public:
+    FolderWatcher(QObject *_parent = NULL);
 
-    public:
-        FolderWatcher(QObject *_parent = NULL);
+    void addFolder(QString folder);
+    void addFolders(QStringList folders);
+    void removeFolder(QString folder);
+    void removeFolders(QStringList folders);
+    QStringList getFolders();
 
-        void addFolder(QString folder);
-        void addFolders(QStringList folders);
-        void removeFolder(QString folder);
-        void removeFolders(QStringList folders);
-        QStringList getFolders();
+private slots:
+    void onDirectoryChanged(const QString&);
 
-    private:
-        void saveFolders();
+private:
+    QString getNewFileFromFolder(QString folderPath);
+    bool isFileWithoutExtension(QString filePath);
+    void saveFolders();
 
-        QFileSystemWatcher* m_fileSystemWatcher;
-    };
+    QFileSystemWatcher* fileSystemWatcher;
 
-} /* namespace FolderWatcher */
+signals:
+    void imageWithoutExtensionFound(const QString&);
+};
 
 #endif /* FOLDERWATCHER_H_ */

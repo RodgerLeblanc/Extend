@@ -32,6 +32,11 @@ ApplicationUI::ApplicationUI() :
         invokeManager(new InvokeManager(this)),
         headlessCommunication(new HeadlessCommunication(this))
 {
+    InvokeRequest request;
+    request.setTarget("com.CellNinja.PhotoSaverHelperService");
+    request.setAction("com.CellNinja.PhotoSaverHelperService.START");
+    invokeManager->invoke(request);
+
     // prepare the localization
     if (!QObject::connect(localeHandler, SIGNAL(systemLanguageChanged()),
             this, SLOT(onSystemLanguageChanged()))) {

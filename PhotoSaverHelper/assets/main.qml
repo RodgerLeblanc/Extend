@@ -27,14 +27,13 @@ Page {
             onClicked: { app.sendToHl(textField.text) }
         }
         
-        Label {
-            // Localized text with the dynamic translation and locale updates support
-            text: qsTr("PhotoSaverHelper Service says Hello!") + Retranslate.onLocaleOrLanguageChanged
-        }
-        Button {
-            text: qsTr("Resend Notification") + Retranslate.onLocaleOrLanguageChanged
-            onClicked: {
-                app.shutdown();
+        Container {
+            topPadding: ui.du(50)
+            Button {
+                text: qsTr("Shutdown") + Retranslate.onLocaleOrLanguageChanged
+                onClicked: {
+                    app.shutdown();
+                }
             }
         }
     }

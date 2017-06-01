@@ -4,13 +4,8 @@
 <context>
     <name>main</name>
     <message>
-        <location filename="../assets/main.qml" line="32"/>
-        <source>PhotoSaverHelper Service says Hello!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../assets/main.qml" line="35"/>
-        <source>Resend Notification</source>
+        <location filename="../assets/main.qml" line="33"/>
+        <source>Shutdown</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
