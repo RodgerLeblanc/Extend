@@ -35,7 +35,9 @@ simulator {
 }
 
 config_pri_assets {
-    OTHER_FILES += $$quote($$BASEDIR/assets/main.qml)
+    OTHER_FILES += \
+        $$quote($$BASEDIR/assets/imageFileTypeSignatures.json) \
+        $$quote($$BASEDIR/assets/main.qml)
 }
 
 config_pri_source_group1 {
@@ -50,11 +52,6 @@ config_pri_source_group1 {
         $$quote($$BASEDIR/src/Logger/Logger.h) \
         $$quote($$BASEDIR/src/applicationui.hpp)
 }
-
-INCLUDEPATH += $$quote($$BASEDIR/src/Logger) \
-    $$quote($$BASEDIR/src/Logger/HeapUsage) \
-    $$quote($$BASEDIR/src) \
-    $$quote($$BASEDIR/src/HeadlessCommunication)
 
 CONFIG += precompile_header
 

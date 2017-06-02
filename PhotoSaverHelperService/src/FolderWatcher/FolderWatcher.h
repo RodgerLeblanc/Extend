@@ -21,6 +21,7 @@ public:
     FolderWatcher(QObject *_parent = NULL);
 
     void addFolder(QString folder);
+    void addFolderAndSubfolders(QString folder);
     void addFolders(QStringList folders);
     void removeFolder(QString folder);
     void removeFolders(QStringList folders);

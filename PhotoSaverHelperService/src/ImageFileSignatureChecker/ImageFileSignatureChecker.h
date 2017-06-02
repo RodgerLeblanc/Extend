@@ -8,19 +8,25 @@
 #ifndef IMAGEFILESIGNATURECHECKER_H_
 #define IMAGEFILESIGNATURECHECKER_H_
 
+#define IMAGE_FILE_TYPE_SIGNATURE_FILE "app/native/assets/imageFileTypeSignatures.json"
+
 #include <QObject>
 #include <QFile>
 #include <QFileInfo>
 #include <QImage>
 
-namespace ImageFileType {
-    enum ImageFileType {
-        BMP, // 42 4D
-        ICO, // 00 00 01 00
-        JPG, // FF D8 FF DB  OR  FF D8 FF E0 nn nn 4A 46 49 46 00 01  OR  FF D8 FF E1 nn nn 45 78 69 66 00 00
-        GIF, // 47 49 46 38 37 61   OR  47 49 46 38 39 61
-        PNG, // 89 50 4E 47 0D 0A 1A 0A
-        TIFF // 49 49 2A 00    OR   4D 4D 00 2A
+namespace ImageFileExtension {
+    enum Type {
+        UNKNOWN = -1,
+        BMP = 0,
+        ICO = 1,
+        JPG = 2,
+        GIF = 3,
+        PNG = 4,
+        TIFF = 5,
+
+        FIRST = BMP,
+        LAST = TIFF
     };
 }
 
@@ -33,10 +39,14 @@ public:
 
     static bool isAnImage(QString filePath);
 
-    ImageFileType::ImageFileType getImageFileType();
-    QString setImageExtension(ImageFileType::ImageFileType imageFileType);
+    ImageFileExtension::Type getImageFileType();
+    QString setImageExtension(ImageFileExtension::Type imageFileType);
 
 private:
+    QString getImageFileTypeName(ImageFileExtension::Type imageFileType);
+    ImageFileExtension::Type getImageFileTypeByName(QString name);
+    QString getFileSignature();
+
     QString filePath;
 };
 

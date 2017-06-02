@@ -6,6 +6,7 @@
  */
 
 #include "FolderWatcher.h"
+#include <src/Logger/Logger.h>
 #include "src/Settings/Settings.h"
 #include "src/ImageFileSignatureChecker/ImageFileSignatureChecker.h"
 
@@ -70,6 +71,20 @@ void FolderWatcher::addFolder(QString folder) {
     this->saveFolders();
 }
 
+void FolderWatcher::addFolderAndSubfolders(QString folder) {
+    this->addFolder(folder);
+
+    QDir dir(folder);
+    QDir::Filters filters = QDir::Dirs | QDir::NoDotAndDotDot;
+    QFileInfoList fileInfoList = dir.entryInfoList(filters);
+
+    foreach(QFileInfo fileInfo, fileInfoList) {
+        if (fileInfo.isDir()) {
+            this->addFolderAndSubfolders(fileInfo.absoluteFilePath());
+        }
+    }
+}
+
 void FolderWatcher::addFolders(QStringList folders) {
     fileSystemWatcher->addPaths(folders);
     this->saveFolders();
@@ -91,5 +106,7 @@ QStringList FolderWatcher::getFolders() {
 
 void FolderWatcher::saveFolders() {
     Settings* settings = Settings::instance();
-    settings->setValue(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, this->getFolders());
+    QStringList folders = this->getFolders();
+    folders.removeDuplicates();
+    settings->setValue(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, folders);
 }

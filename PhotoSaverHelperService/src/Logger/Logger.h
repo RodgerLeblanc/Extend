@@ -30,7 +30,7 @@
 class Logger
 {
 public:
-    static void logThis(const QString& message) {
+    static void logThis(QString message) {
         qDebug() << HeapUsage::measureMem() << message;
 
         QMutex mutex;
@@ -47,6 +47,10 @@ public:
         QVariantMap logMap;
         logMap.insert("log", log);
         jda.save(logMap, LOG_FILE);
+    }
+
+    static void consoleThis(QString message) {
+        qDebug() << message;
     }
 
     static QString variantToString(const QVariant& variant) {

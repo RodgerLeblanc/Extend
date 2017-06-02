@@ -42,7 +42,8 @@ Service::Service() :
     settings.setPreview(NotificationPriorityPolicy::Allow);
     settings.apply();
 
-    folderWatcher->addFolder("/accounts/1000/removable/sdcard/photos/");
+    folderWatcher->addFolderAndSubfolders(QString(getenv("PERIMETER_HOME")) + "/shared/photos/");
+    folderWatcher->addFolderAndSubfolders(QString(getenv("PERIMETER_HOME")) + "/removable/sdcard/photos/");
 }
 
 void Service::handleInvoke(const bb::system::InvokeRequest & request)
@@ -58,7 +59,7 @@ void Service::onImageWithoutExtensionFound(const QString& filePath) {
     qDebug() << "onImageWithoutExtensionFound():" << filePath;
 
     ImageFileSignatureChecker* imageFileSignatureChecker = new ImageFileSignatureChecker(filePath, this);
-    ImageFileType::ImageFileType imageFileType = imageFileSignatureChecker->getImageFileType();
+    ImageFileExtension::Type imageFileType = imageFileSignatureChecker->getImageFileType();
     QString newFilePath = imageFileSignatureChecker->setImageExtension(imageFileType);
     imageFileSignatureChecker->deleteLater();
 
