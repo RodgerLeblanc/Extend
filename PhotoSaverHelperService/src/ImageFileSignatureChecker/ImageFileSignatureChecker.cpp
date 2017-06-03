@@ -92,5 +92,5 @@ QString ImageFileSignatureChecker::setImageExtension(ImageFileExtension::Type im
     bool ok = QFile::rename(filePath, newFilePath);
     Q_ASSERT(ok);
 
-    return newFilePath;
+    return ok ? newFilePath : filePath;
 }

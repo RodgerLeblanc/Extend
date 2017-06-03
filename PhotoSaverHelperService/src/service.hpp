@@ -18,6 +18,8 @@
 #define SERVICE_H_
 
 #include <QObject>
+#include <QTimer>
+#include <src/DeviceActive/DeviceActive.h>
 #include <src/HeadlessCommunication/HeadlessCommunication.h>
 #include <src/FolderWatcher/FolderWatcher.h>
 
@@ -41,15 +43,18 @@ public:
 
 private slots:
     void handleInvoke(const bb::system::InvokeRequest &);
+    void onDeviceActiveChanged(const bool&);
     void onImageWithoutExtensionFound(const QString&);
+    void onNotificationKillerTimeout();
     void onReceivedData(QString);
 
 private:
-//    bb::platform::Notification* notify;
-    bb::system::InvokeManager* invokeManager;
+    void notify(QString title, QString body, QString iconUrl = "");
 
+    DeviceActive* deviceActive;
     FolderWatcher* folderWatcher;
     HeadlessCommunication* headlessCommunication;
+    bb::system::InvokeManager* invokeManager;
 };
 
 #endif /* SERVICE_H_ */

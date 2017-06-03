@@ -12,6 +12,7 @@
 
 #include <QObject>
 #include <QFileSystemWatcher>
+#include <bb/device/SdCardInfo>
 
 class FolderWatcher : public QObject
 {
@@ -21,21 +22,27 @@ public:
     FolderWatcher(QObject *_parent = NULL);
 
     void addFolder(QString folder);
-    void addFolderAndSubfolders(QString folder);
     void addFolders(QStringList folders);
+    void addFolderAndSubfolders(QString folder);
+    void addFoldersAndSubfolders(QStringList folders);
     void removeFolder(QString folder);
     void removeFolders(QStringList folders);
     QStringList getFolders();
 
 private slots:
     void onDirectoryChanged(const QString&);
+    void onSdCardStateChanged(bb::device::SdCardState::Type);
 
 private:
-    QString getNewFileFromFolder(QString folderPath);
+    QStringList getDefaultDeviceFolders();
+    QStringList getDefaultSdFolders();
+    QFileInfo getLastEntry(QString folderPath, QFileInfo defaultFileInfo);
     bool isFileWithoutExtension(QString filePath);
+    bool isWatchingDefaultFolders(QStringList defaultFoldersList);
     void saveFolders();
 
     QFileSystemWatcher* fileSystemWatcher;
+    bb::device::SdCardInfo* sdCardInfo;
 
 signals:
     void imageWithoutExtensionFound(const QString&);
