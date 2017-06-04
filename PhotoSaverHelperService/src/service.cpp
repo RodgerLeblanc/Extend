@@ -15,7 +15,8 @@
  */
 
 #include "service.hpp"
-#include "src/ImageFileSignatureChecker/ImageFileSignatureChecker.h"
+
+#include <src/Logger/Logger.h>
 
 #include <bb/Application>
 #include <bb/platform/Notification>
@@ -44,8 +45,12 @@ Service::Service() :
     settings.apply();
 }
 
-void Service::handleInvoke(const bb::system::InvokeRequest & request)
-{
+Service::~Service() {
+    LOG("~Service()");
+    Logger::save();
+}
+
+void Service::handleInvoke(const bb::system::InvokeRequest & request) {
     QString action = request.action().split(".").last();
 
     if (action == "SHUTDOWN") {
@@ -54,42 +59,59 @@ void Service::handleInvoke(const bb::system::InvokeRequest & request)
 }
 
 void Service::onDeviceActiveChanged(const bool& deviceActive) {
-    qDebug() << "Service::onDeviceActiveChanged():" << QString(deviceActive ? "true" : "false");
+    LOG(QString("Service::onDeviceActiveChanged(): " + STRING(deviceActive)));
 }
 
 void Service::onImageWithoutExtensionFound(const QString& filePath) {
-    qDebug() << "Service::onImageWithoutExtensionFound():" << filePath;
+    LOG(QString("Service::onImageWithoutExtensionFound(): " + filePath));
 
     ImageFileSignatureChecker* imageFileSignatureChecker = new ImageFileSignatureChecker(filePath, this);
-    ImageFileExtension::Type imageFileType = imageFileSignatureChecker->getImageFileType();
+    connect(imageFileSignatureChecker,
+            SIGNAL(error(QString, ImageFileSignatureCheckerError, QString)),
+            this,
+            SLOT(onImageFileSignatureCheckerError(QString, ImageFileSignatureCheckerError, QString)));
+
+    ImageFileExtensionType imageFileType = imageFileSignatureChecker->getImageFileType();
     QString newFilePath = imageFileSignatureChecker->setImageExtension(imageFileType);
     imageFileSignatureChecker->deleteLater();
 
-    qDebug() << "newFilePath" << newFilePath;
-    QString title, body, iconUrl;
-    if (newFilePath != filePath) {
-        title = bb::Application::applicationName();
-        body = QString(tr("Renamed %1")).arg(newFilePath.split("/").last());
-        iconUrl = newFilePath;
+    LOG_VAR(newFilePath);
+
+    if (newFilePath == filePath) {
+        return;
     }
-    else {
-        title = bb::Application::applicationName();
-        body = QString(tr("Error renaming %1")).arg(newFilePath.split("/").last());
-    }
-    this->notify(title, body, iconUrl);
+
+    QString title = bb::Application::applicationName();
+    QString body = QString(tr("Renamed %1")).arg(newFilePath.split("/").last());
+    QString iconUrl = newFilePath;
+    this->notifyTemporarily(title, body, iconUrl);
+}
+
+void Service::onImageFileSignatureCheckerError(QString filePath, ImageFileSignatureCheckerError error, QString errorMessage) {
+    LOG(QString("Service::onImageFileSignatureCheckerError(): " + filePath + " " + STRING(error) + " " + errorMessage));
 }
 
 void Service::onReceivedData(QString data) {
-    qDebug() << "Service::onReceivedData():" << data;
+    LOG(QString("Service::onReceivedData(): " + data));
+
+    if (data == "LOG_TO_HUB") {
+        QString title = bb::Application::applicationName();
+        QString body = STRING(Logger::getLog());
+        this->notify(title, body);
+    }
 }
 
 void Service::notify(QString title, QString body, QString iconUrl) {
-    qDebug() << "Service::notify():" << title << body << iconUrl;
+    LOG(QString("Service::notify(): " + title + " " + body + " " + iconUrl));
 
-    bb::platform::Notification* notify = new Notification(this);
-    notify->setTitle(title);
-    notify->setBody(body);
-    notify->setIconUrl(QUrl(iconUrl));
+    Notification* notify = this->createNotification(title, body, iconUrl);
+    notify->notify();
+}
+
+void Service::notifyTemporarily(QString title, QString body, QString iconUrl) {
+    LOG(QString("Service::notifyTemporarily(): " + title + " " + body + " " + iconUrl));
+
+    Notification* notify = this->createNotification(title, body, iconUrl);
     notify->setTimestamp(QDateTime::currentDateTime().addYears(-1)); // Hide notification from Hub
 
     QTimer* notificationKiller = new QTimer(notify);
@@ -101,8 +123,16 @@ void Service::notify(QString title, QString body, QString iconUrl) {
     notify->notify();
 }
 
+Notification* Service::createNotification(QString title, QString body, QString iconUrl) {
+    Notification* notify = new Notification(this);
+    notify->setTitle(title);
+    notify->setBody(body);
+    notify->setIconUrl(QUrl(iconUrl));
+    return notify;
+}
+
 void Service::onNotificationKillerTimeout() {
-    qDebug() << "Service::onNotificationKillerTimeout()";
+    LOG("Service::onNotificationKillerTimeout()");
 
     QTimer* notificationKiller = qobject_cast<QTimer*>(sender());
     Notification* notify = (Notification*)notificationKiller->parent();

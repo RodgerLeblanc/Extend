@@ -28,12 +28,15 @@ Page {
         }
         
         Container {
+            layout: StackLayout { orientation: LayoutOrientation.LeftToRight }
             topPadding: ui.du(50)
             Button {
+                text: qsTr("Print log to Hub") + Retranslate.onLocaleOrLanguageChanged
+                onClicked: { app.sendToHl("LOG_TO_HUB"); }
+            }
+            Button {
                 text: qsTr("Shutdown") + Retranslate.onLocaleOrLanguageChanged
-                onClicked: {
-                    app.shutdown();
-                }
+                onClicked: { app.shutdown(); }
             }
         }
     }

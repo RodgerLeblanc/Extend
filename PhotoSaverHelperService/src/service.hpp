@@ -21,6 +21,7 @@
 #include <QTimer>
 #include <src/DeviceActive/DeviceActive.h>
 #include <src/HeadlessCommunication/HeadlessCommunication.h>
+#include <src/ImageFileSignatureChecker/ImageFileSignatureChecker.h>
 #include <src/FolderWatcher/FolderWatcher.h>
 
 namespace bb {
@@ -39,17 +40,20 @@ class Service: public QObject
     Q_OBJECT
 public:
     Service();
-    virtual ~Service() {}
+    virtual ~Service();
 
 private slots:
     void handleInvoke(const bb::system::InvokeRequest &);
     void onDeviceActiveChanged(const bool&);
+    void onImageFileSignatureCheckerError(QString, ImageFileSignatureCheckerError, QString);
     void onImageWithoutExtensionFound(const QString&);
     void onNotificationKillerTimeout();
     void onReceivedData(QString);
 
 private:
+    bb::platform::Notification* createNotification(QString title, QString body, QString iconUrl);
     void notify(QString title, QString body, QString iconUrl = "");
+    void notifyTemporarily(QString title, QString body, QString iconUrl = "");
 
     DeviceActive* deviceActive;
     FolderWatcher* folderWatcher;

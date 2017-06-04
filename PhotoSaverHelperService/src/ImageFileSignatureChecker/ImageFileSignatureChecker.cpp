@@ -6,6 +6,7 @@
  */
 
 #include "ImageFileSignatureChecker.h"
+#include <src/Logger/Logger.h>
 
 #include <bb/data/JsonDataAccess>
 #include <QStringList>
@@ -21,7 +22,7 @@ bool ImageFileSignatureChecker::isAnImage(QString filePath) {
     return !image.isNull();
 }
 
-ImageFileExtension::Type ImageFileSignatureChecker::getImageFileType() {
+ImageFileExtensionType ImageFileSignatureChecker::getImageFileType() {
     bb::data::JsonDataAccess jda;
 
     QString thisSig = this->getFileSignature();
@@ -37,17 +38,19 @@ ImageFileExtension::Type ImageFileSignatureChecker::getImageFileType() {
         }
     }
 
-    return ImageFileExtension::UNKNOWN;
+    LOG("Image file type can't be retrieved");
+    return UNKNOWN;
 }
 
-ImageFileExtension::Type ImageFileSignatureChecker::getImageFileTypeByName(QString name) {
-    for(int i = ImageFileExtension::FIRST; i <= ImageFileExtension::LAST; i++) {
-        ImageFileExtension::Type thisType = (ImageFileExtension::Type)i;
+ImageFileExtensionType ImageFileSignatureChecker::getImageFileTypeByName(QString name) {
+    for(int i = FIRST; i <= LAST; i++) {
+        ImageFileExtensionType thisType = (ImageFileExtensionType)i;
         if (this->getImageFileTypeName(thisType) == name) {
             return thisType;
         }
     }
-    return ImageFileExtension::UNKNOWN;
+    LOG("Image file type can't be retrieved");
+    return UNKNOWN;
 }
 
 QString ImageFileSignatureChecker::getFileSignature() {
@@ -63,34 +66,38 @@ QString ImageFileSignatureChecker::getFileSignature() {
     return sig;
 }
 
-QString ImageFileSignatureChecker::getImageFileTypeName(ImageFileExtension::Type imageFileType) {
+QString ImageFileSignatureChecker::getImageFileTypeName(ImageFileExtensionType imageFileType) {
     switch (imageFileType) {
-        case ImageFileExtension::UNKNOWN :
+        case UNKNOWN :
             return "";
-        case ImageFileExtension::BMP :
+        case BMP :
             return "BMP";
-        case ImageFileExtension::ICO :
+        case ICO :
             return "ICO";
-        case ImageFileExtension::JPG :
+        case JPG :
             return "JPG";
-        case ImageFileExtension::GIF :
+        case GIF :
             return "GIF";
-        case ImageFileExtension::PNG :
+        case PNG :
             return "PNG";
-        case ImageFileExtension::TIFF :
+        case TIFF :
             return "TIFF";
     }
     return "";
 }
 
-QString ImageFileSignatureChecker::setImageExtension(ImageFileExtension::Type imageFileType) {
+QString ImageFileSignatureChecker::setImageExtension(ImageFileExtensionType imageFileType) {
     QString extension = this->getImageFileTypeName(imageFileType).toLower();
     if (extension.isEmpty())
         return filePath;
 
+    QFile file(filePath);
     QString newFilePath = filePath + "." + extension;
-    bool ok = QFile::rename(filePath, newFilePath);
-    Q_ASSERT(ok);
+    bool ok = file.rename(newFilePath);
+
+    if (!ok) {
+        emit this->error(filePath, (ImageFileSignatureCheckerError)file.error(), file.errorString());
+    }
 
     return ok ? newFilePath : filePath;
 }

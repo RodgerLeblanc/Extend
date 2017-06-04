@@ -40,6 +40,7 @@ config_pri_source_group1 {
         $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.cpp) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.cpp) \
         $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.cpp) \
+        $$quote($$BASEDIR/src/Logger/Logger.cpp) \
         $$quote($$BASEDIR/src/Settings/Settings.cpp) \
         $$quote($$BASEDIR/src/main.cpp) \
         $$quote($$BASEDIR/src/service.cpp)
