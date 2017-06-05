@@ -12,15 +12,13 @@
  * 2- In your applicationui.hpp or service.hpp, add those lines :
  *      #include <src/Logger/Logger.h>
  *
- *      private:
- *          Logger* logger;
+ * 3- Use it anywhere in your cpp file using the macro, it accepts
+ * any number of arguments of QVariant type :
+ *      LOG("Hello World!", 123, true, QDateTime::currentDateTime());
  *
- * 3- In your application.cpp or service.cpp, add those lines :
- *      (in constructor)
- *      logger = Logger::instance(this);
- *
- * 4- Use it anywhere in your cpp file :
- *      logger.log("Hello World!";
+ * There's also two other macros available :
+ *      LOG_VAR(x)  ===> will log {variable name}: {variable value}
+ *      STRING(x)   ===> will convert any QVariant to QString
  *
  */
 
@@ -58,7 +56,7 @@ QVariantMap Logger::getLog() {
     return log;
 }
 
-void Logger::log(QString message) {
+void Logger::logFinal(QString message) {
     qDebug() << message;
 
     Logger* logger = Logger::instance();

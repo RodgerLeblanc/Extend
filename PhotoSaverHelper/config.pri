@@ -53,6 +53,11 @@ config_pri_source_group1 {
         $$quote($$BASEDIR/src/applicationui.hpp)
 }
 
+INCLUDEPATH += $$quote($$BASEDIR/src/Logger) \
+    $$quote($$BASEDIR/src/Logger/HeapUsage) \
+    $$quote($$BASEDIR/src) \
+    $$quote($$BASEDIR/src/HeadlessCommunication)
+
 CONFIG += precompile_header
 
 PRECOMPILED_HEADER = $$quote($$BASEDIR/precompiled.h)

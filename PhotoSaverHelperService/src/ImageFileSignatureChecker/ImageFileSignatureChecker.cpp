@@ -88,11 +88,17 @@ QString ImageFileSignatureChecker::getImageFileTypeName(ImageFileExtensionType i
 
 QString ImageFileSignatureChecker::setImageExtension(ImageFileExtensionType imageFileType) {
     QString extension = this->getImageFileTypeName(imageFileType).toLower();
-    if (extension.isEmpty())
+    if (extension.isEmpty()) {
+        emit this->error(filePath, UnspecifiedError, "Can't find a matching extension");
         return filePath;
+    }
 
     QFile file(filePath);
     QString newFilePath = filePath + "." + extension;
+    while (QFile::exists(newFilePath)) {
+        newFilePath.insert(newFilePath.lastIndexOf("."), "_copy");
+    }
+
     bool ok = file.rename(newFilePath);
 
     if (!ok) {

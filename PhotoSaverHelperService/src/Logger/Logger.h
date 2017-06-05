@@ -8,9 +8,9 @@
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
-#define STRING(x) Logger::convertToString(x)
-#define LOG(x) Logger::log(Logger::convertToString(x))
+#define LOG(args...) Logger::log(args)
 #define LOG_VAR(x) Logger::log(QString(QString(#x) + ": " + Logger::convertToString(x)))
+#define STRING(x) Logger::convertToString(x)
 
 #include <src/Logger/HeapUsage/HeapUsage.h>
 
@@ -39,13 +39,34 @@ public:
         return instance;
     }
 
-    static void log(QString message);
-    static QString convertToString(QVariant variant);
     static QVariantMap getLog();
     static void save();
 
-private:
+    template<typename T>
+    static void log(T t) {
+        Logger::addToOutput(t);
+        Logger::logFinal(Logger::instance()->output);
+        Logger::instance()->output = "";
+    }
 
+    template<typename T, typename... Args>
+    static void log(T t, Args... args) {
+        Logger::addToOutput(t);
+        log(args...);
+    }
+
+    static QString convertToString(QVariant variant);
+
+private:
+    template<typename T>
+    static void addToOutput(T t) {
+        if (!Logger::instance()->output.isEmpty()) { Logger::instance()->output += " "; }
+        Logger::instance()->output += Logger::convertToString(t);
+    }
+
+    static void logFinal(QString message);
+
+    QString output;
     QVariantMap logMap;
     QDateTime lastSaveDateTime;
 

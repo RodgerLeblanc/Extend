@@ -57,6 +57,15 @@ config_pri_source_group1 {
         $$quote($$BASEDIR/src/service.hpp)
 }
 
+INCLUDEPATH += $$quote($$BASEDIR/src/FolderWatcher) \
+    $$quote($$BASEDIR/src/ImageFileSignatureChecker) \
+    $$quote($$BASEDIR/src/Logger) \
+    $$quote($$BASEDIR/src/Logger/HeapUsage) \
+    $$quote($$BASEDIR/src/Settings) \
+    $$quote($$BASEDIR/src) \
+    $$quote($$BASEDIR/src/HeadlessCommunication) \
+    $$quote($$BASEDIR/src/DeviceActive)
+
 CONFIG += precompile_header
 
 PRECOMPILED_HEADER = $$quote($$BASEDIR/precompiled.h)

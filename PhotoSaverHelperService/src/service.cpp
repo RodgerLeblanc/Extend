@@ -59,11 +59,11 @@ void Service::handleInvoke(const bb::system::InvokeRequest & request) {
 }
 
 void Service::onDeviceActiveChanged(const bool& deviceActive) {
-    LOG(QString("Service::onDeviceActiveChanged(): " + STRING(deviceActive)));
+    LOG("Service::onDeviceActiveChanged():", STRING(deviceActive));
 }
 
 void Service::onImageWithoutExtensionFound(const QString& filePath) {
-    LOG(QString("Service::onImageWithoutExtensionFound(): " + filePath));
+    LOG("Service::onImageWithoutExtensionFound():", filePath);
 
     ImageFileSignatureChecker* imageFileSignatureChecker = new ImageFileSignatureChecker(filePath, this);
     connect(imageFileSignatureChecker,
@@ -88,11 +88,11 @@ void Service::onImageWithoutExtensionFound(const QString& filePath) {
 }
 
 void Service::onImageFileSignatureCheckerError(QString filePath, ImageFileSignatureCheckerError error, QString errorMessage) {
-    LOG(QString("Service::onImageFileSignatureCheckerError(): " + filePath + " " + STRING(error) + " " + errorMessage));
+    LOG("Service::onImageFileSignatureCheckerError():", filePath, STRING(error), errorMessage);
 }
 
 void Service::onReceivedData(QString data) {
-    LOG(QString("Service::onReceivedData(): " + data));
+    LOG("Service::onReceivedData():", data);
 
     if (data == "LOG_TO_HUB") {
         QString title = bb::Application::applicationName();
@@ -102,14 +102,14 @@ void Service::onReceivedData(QString data) {
 }
 
 void Service::notify(QString title, QString body, QString iconUrl) {
-    LOG(QString("Service::notify(): " + title + " " + body + " " + iconUrl));
+//    LOG("Service::notify():", title, body, iconUrl);
 
     Notification* notify = this->createNotification(title, body, iconUrl);
     notify->notify();
 }
 
 void Service::notifyTemporarily(QString title, QString body, QString iconUrl) {
-    LOG(QString("Service::notifyTemporarily(): " + title + " " + body + " " + iconUrl));
+    LOG("Service::notifyTemporarily():", title, body, iconUrl);
 
     Notification* notify = this->createNotification(title, body, iconUrl);
     notify->setTimestamp(QDateTime::currentDateTime().addYears(-1)); // Hide notification from Hub

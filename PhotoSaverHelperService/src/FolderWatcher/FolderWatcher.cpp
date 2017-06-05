@@ -48,7 +48,7 @@ bool FolderWatcher::isWatchingDefaultFolders(QStringList defaultFoldersList) {
 }
 
 void FolderWatcher::onSdCardStateChanged(SdCardState::Type sdCardState) {
-    LOG(QString("FolderWatcher::onSdCardStateChanged(): " + STRING(sdCardState)));
+    LOG("FolderWatcher::onSdCardStateChanged():", STRING(sdCardState));
 
     if (sdCardState != SdCardState::Mounted) {
         return;
@@ -65,7 +65,7 @@ void FolderWatcher::onSdCardStateChanged(SdCardState::Type sdCardState) {
 }
 
 void FolderWatcher::onDirectoryChanged(const QString& folderPath) {
-    LOG(QString("FolderWatcher::onDirectoryChanged(): " + folderPath));
+    LOG("FolderWatcher::onDirectoryChanged():", folderPath);
 
     QFileInfo defaultFileInfo;
     QFileInfo lastEntry = this->getLastEntry(folderPath, defaultFileInfo);
