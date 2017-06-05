@@ -21,21 +21,18 @@ FolderWatcher::FolderWatcher(QObject *_parent) :
     fileSystemWatcher(new QFileSystemWatcher(this)),
     sdCardInfo(new bb::device::SdCardInfo(this))
 {
-    Settings* settings = Settings::instance();
-    QStringList folders = settings->value(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, "").toStringList();
-    this->addFolders(folders);
-
     connect(fileSystemWatcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(onDirectoryChanged(const QString&)));
     connect(sdCardInfo, SIGNAL(stateChanged(bb::device::SdCardState::Type)), this, SLOT(onSdCardStateChanged(bb::device::SdCardState::Type)));
 
-    QStringList defaultFoldersList = this->getDefaultDeviceFolders();
-    if (!this->isWatchingDefaultFolders(defaultFoldersList)) {
-        this->addFoldersAndSubfolders(defaultFoldersList);
-    }
+    this->addFoldersAndSubfolders(this->getDefaultDeviceFolders());
+    this->addFoldersAndSubfolders(this->getDefaultSdFolders());
 
-    defaultFoldersList = this->getDefaultSdFolders();
-    if (!this->isWatchingDefaultFolders(defaultFoldersList)) {
-        this->addFoldersAndSubfolders(defaultFoldersList);
+    Settings* settings = Settings::instance();
+    QStringList folders = settings->value(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, "").toStringList();
+    folders.append(this->getFolders());
+    folders.removeDuplicates();
+    if (!folders.isEmpty()) {
+        this->addFolders(folders);
     }
 }
 
@@ -123,6 +120,7 @@ void FolderWatcher::addFolder(QString folder) {
     if (fileSystemWatcher->directories().contains(folder))
         return;
 
+    this->cleanFolder(folder);
     fileSystemWatcher->addPath(folder);
     this->saveFolders();
 }
@@ -171,4 +169,25 @@ void FolderWatcher::saveFolders() {
     QStringList folders = this->getFolders();
     folders.removeDuplicates();
     settings->setValue(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, folders);
+}
+
+void FolderWatcher::cleanFolder(QString folderPath) {
+    QDir dir(folderPath);
+    QDir::Filters filters = QDir::Files;
+    QFileInfoList fileInfoList = dir.entryInfoList(filters);
+
+    foreach(QFileInfo fileInfo, fileInfoList) {
+        QString newFilePath = fileInfo.absoluteFilePath();
+        if (this->isFileWithoutExtension(newFilePath)) {
+            if (ImageFileSignatureChecker::isAnImage(newFilePath)) {
+                emit imageWithoutExtensionFound(newFilePath);
+            }
+        }
+    }
+}
+
+void FolderWatcher::cleanWatchedFolders() {
+    foreach(QString folder, this->getFolders()) {
+        this->cleanFolder(folder);
+    }
 }

@@ -29,11 +29,15 @@ public:
     void removeFolders(QStringList folders);
     QStringList getFolders();
 
+public slots:
+    void cleanWatchedFolders();
+
 private slots:
     void onDirectoryChanged(const QString&);
     void onSdCardStateChanged(bb::device::SdCardState::Type);
 
 private:
+    void cleanFolder(QString folderPath);
     QStringList getDefaultDeviceFolders();
     QStringList getDefaultSdFolders();
     QFileInfo getLastEntry(QString folderPath, QFileInfo defaultFileInfo);

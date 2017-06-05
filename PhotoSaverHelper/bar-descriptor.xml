@@ -58,7 +58,7 @@
     <!-- Name of author which is used for signing. Must match the developer
         name of your development certificate. -->
     <author>CellNinja</author>
-    <buildId>4</buildId>
+    <buildId>5</buildId>
     <configuration name="Device-Debug">
         <platformArchitecture>armle-v7</platformArchitecture>
         <entryPointType>Qnx/Elf</entryPointType>

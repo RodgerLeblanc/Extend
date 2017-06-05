@@ -43,6 +43,8 @@ Service::Service() :
     NotificationDefaultApplicationSettings settings;
     settings.setPreview(NotificationPriorityPolicy::Allow);
     settings.apply();
+
+    QMetaObject::invokeMethod(folderWatcher, "cleanWatchedFolders", Qt::QueuedConnection);
 }
 
 Service::~Service() {
