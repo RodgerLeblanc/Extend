@@ -20,8 +20,10 @@
 
 #include <bb/Application>
 #include <bb/platform/Notification>
+#include <bb/platform/NotificationDialog>
 #include <bb/platform/NotificationDefaultApplicationSettings>
 #include <bb/system/InvokeManager>
+#include <bb/system/SystemUiButton>
 
 using namespace bb::platform;
 using namespace bb::system;
@@ -113,16 +115,24 @@ void Service::notify(QString title, QString body, QString iconUrl) {
 void Service::notifyTemporarily(QString title, QString body, QString iconUrl) {
     LOG("Service::notifyTemporarily():", title, body, iconUrl);
 
+    /*
     Notification* notify = this->createNotification(title, body, iconUrl);
     notify->setTimestamp(QDateTime::currentDateTime().addYears(-1)); // Hide notification from Hub
+    */
+    NotificationDialog* dialog = new NotificationDialog(this);
+    dialog->setTitle(title);
+    dialog->setBody(body);
+    dialog->appendButton(new SystemUiButton("Ok", dialog));
 
-    QTimer* notificationKiller = new QTimer(notify);
+//    QTimer* notificationKiller = new QTimer(notify);
+    QTimer* notificationKiller = new QTimer(dialog);
     connect(notificationKiller, SIGNAL(timeout()), this, SLOT(onNotificationKillerTimeout()));
     notificationKiller->setInterval(3000);
     notificationKiller->setSingleShot(true);
     notificationKiller->start();
 
-    notify->notify();
+//    notify->notify();
+    dialog->show();
 }
 
 Notification* Service::createNotification(QString title, QString body, QString iconUrl) {

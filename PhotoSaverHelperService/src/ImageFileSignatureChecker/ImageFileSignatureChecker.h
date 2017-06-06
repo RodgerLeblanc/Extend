@@ -61,7 +61,7 @@ public:
 private:
     QString getImageFileTypeName(ImageFileExtensionType imageFileType);
     ImageFileExtensionType getImageFileTypeByName(QString name);
-    QString getFileSignature();
+    QByteArray getFileSignature();
 
     QString filePath;
 

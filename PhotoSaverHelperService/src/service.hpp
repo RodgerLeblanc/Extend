@@ -28,6 +28,7 @@ namespace bb {
     class Application;
     namespace platform {
         class Notification;
+        class NotificationDialog;
     }
     namespace system {
         class InvokeManager;

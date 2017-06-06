@@ -9,6 +9,7 @@
 #define HEADLESSCOMMUNICATION_H_
 
 #include <QObject>
+#include <QVariantMap>
 #include <QtNetwork/QUdpSocket>
 
 class HeadlessCommunication : public QObject

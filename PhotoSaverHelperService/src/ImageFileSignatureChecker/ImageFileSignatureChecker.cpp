@@ -25,12 +25,13 @@ bool ImageFileSignatureChecker::isAnImage(QString filePath) {
 ImageFileExtensionType ImageFileSignatureChecker::getImageFileType() {
     bb::data::JsonDataAccess jda;
 
-    QString thisSig = this->getFileSignature();
+    QByteArray thisSig = this->getFileSignature();
     QVariantMap imageFileTypeSignaturesMap = jda.load(IMAGE_FILE_TYPE_SIGNATURE_FILE).toMap();
 
     foreach(QString key, imageFileTypeSignaturesMap.keys()) {
         QStringList sigsForThisExtension = imageFileTypeSignaturesMap[key].toStringList();
         foreach(QString sig, sigsForThisExtension) {
+            sig.remove(" ");
             int maxSigSize = qMin(thisSig.size(), sig.size());
             if (thisSig.left(maxSigSize) == sig.left(maxSigSize)) {
                 return this->getImageFileTypeByName(key);
@@ -53,8 +54,8 @@ ImageFileExtensionType ImageFileSignatureChecker::getImageFileTypeByName(QString
     return UNKNOWN;
 }
 
-QString ImageFileSignatureChecker::getFileSignature() {
-    QString sig;
+QByteArray ImageFileSignatureChecker::getFileSignature() {
+    QByteArray sig;
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly))
     {
@@ -63,7 +64,7 @@ QString ImageFileSignatureChecker::getFileSignature() {
         file.close();
     }
     file.deleteLater();
-    return sig;
+    return sig.toHex().toUpper();
 }
 
 QString ImageFileSignatureChecker::getImageFileTypeName(ImageFileExtensionType imageFileType) {

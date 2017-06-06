@@ -114,7 +114,10 @@ void Settings::listenOnPort(int port)
     m_server->bind(QHostAddress::Any, port);
     bool ok = connect(m_server, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 
-    ok==true ? qDebug() << "binding ok" : qDebug() << "binding failed";
+    if (ok)
+        qDebug() << "binding ok";
+    else
+        qDebug() << "binding failed";
 }
 
 void Settings::onReadyRead()
