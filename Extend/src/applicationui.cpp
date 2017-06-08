@@ -33,8 +33,8 @@ ApplicationUI::ApplicationUI() :
         headlessCommunication(new HeadlessCommunication(this))
 {
     InvokeRequest request;
-    request.setTarget("com.CellNinja.PhotoSaverHelperService");
-    request.setAction("com.CellNinja.PhotoSaverHelperService.START");
+    request.setTarget("com.CellNinja.ExtendService");
+    request.setAction("com.CellNinja.ExtendService.START");
     invokeManager->invoke(request);
 
     // prepare the localization
@@ -73,7 +73,7 @@ void ApplicationUI::onSystemLanguageChanged()
     QCoreApplication::instance()->removeTranslator(translator);
     // Initiate, load and install the application translation files.
     QString locale_string = QLocale().name();
-    QString file_name = QString("PhotoSaverHelper_%1").arg(locale_string);
+    QString file_name = QString("Extend_%1").arg(locale_string);
     if (translator->load(file_name, "app/native/qm")) {
     QCoreApplication::instance()->installTranslator(translator);
     }
@@ -86,8 +86,8 @@ void ApplicationUI::sendToHl(QString message) {
 void ApplicationUI::shutdown()
 {
     InvokeRequest request;
-    request.setTarget("com.CellNinja.PhotoSaverHelperService");
-    request.setAction("com.CellNinja.PhotoSaverHelperService.SHUTDOWN");
+    request.setTarget("com.CellNinja.ExtendService");
+    request.setAction("com.CellNinja.ExtendService.SHUTDOWN");
     invokeManager->invoke(request);
 
     Application::instance()->quit();

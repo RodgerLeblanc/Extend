@@ -1,4 +1,4 @@
-APP_NAME = PhotoSaverHelper
+APP_NAME = Extend
 HEADLESS_SERVICE = $${APP_NAME}Service
 
 CONFIG += qt warn_on cascades10

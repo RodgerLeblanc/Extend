@@ -1,4 +1,4 @@
-QMAKE_TARGET  = PhotoSaverHelperService
+QMAKE_TARGET  = Extend
 LUPDATE       = $(QNX_HOST)/usr/bin/lupdate
 LRELEASE      = $(QNX_HOST)/usr/bin/lrelease
 

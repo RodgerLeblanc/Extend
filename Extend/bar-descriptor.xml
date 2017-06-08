@@ -25,11 +25,12 @@
     <!-- A universally unique application identifier. Must be unique across
         all BlackBerry 10 applications. Using a reverse DNS-style name as the id
         is recommended. (Eg. com.example.ExampleApplication.) Required. -->
-    <id>com.CellNinja.PhotoSaverHelper</id>
+    <id>com.CellNinja.Extend</id>
 
     <!-- The name that is displayed in the BlackBerry 10 application installer.
         May have multiple values for each language. See samples or xsd schema file.
         Optional. -->
+    <name>Extend</name>
 
     <!-- A string value of the format <0-999>.<0-999>.<0-999> that represents
         application version which can be used to check for application upgrade. Values
@@ -37,12 +38,12 @@
         An updated version of application must have a versionNumber value higher
         than the previous version. Required. -->
     <versionNumber>1.0.0</versionNumber>
-    <name>PhotoSaverHelper</name>
     <platformVersion>10.3.0</platformVersion>
     <description>Rename pictures saved without extension.</description>
 
     <!-- Fourth digit segment of the package version. First three segments are
         taken from the <versionNumber> element. Must be an integer from 0 to 2^16-1 -->
+    <buildId>1</buildId>
 
     <!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents
         the version of the application, as it should be shown to users. Optional. -->
@@ -58,67 +59,66 @@
     <!-- Name of author which is used for signing. Must match the developer
         name of your development certificate. -->
     <author>CellNinja</author>
-    <buildId>7</buildId>
     <configuration name="Device-Debug">
         <platformArchitecture>armle-v7</platformArchitecture>
         <entryPointType>Qnx/Elf</entryPointType>
 
-        <asset entryPointId="PhotoSaverHelper" path="arm/o.le-v7-g/PhotoSaverHelper"
-            entry="true" type="Qnx/Elf">PhotoSaverHelper</asset>
-        <asset entryPointId="PhotoSaverHelperService"
-            path="../PhotoSaverHelperService/arm/PhotoSaverHelperService"
-            type="Qnx/Elf">PhotoSaverHelperService</asset>
+        <asset entryPointId="Extend" path="arm/o.le-v7-g/Extend"
+            entry="true" type="Qnx/Elf">Extend</asset>
+        <asset entryPointId="ExtendService"
+            path="../ExtendService/arm/ExtendService"
+            type="Qnx/Elf">ExtendService</asset>
     </configuration>
 
     <configuration name="Device-Release">
         <platformArchitecture>armle-v7</platformArchitecture>
         <entryPointType>Qnx/Cascades</entryPointType>
 
-        <asset entryPointId="PhotoSaverHelper" path="arm/o.le-v7/PhotoSaverHelper.so"
-            entry="true" type="Qnx/Cascades">PhotoSaverHelper.so</asset>
-        <asset entryPointId="PhotoSaverHelperService"
-            path="../PhotoSaverHelperService/arm/PhotoSaverHelperService"
-            type="Qnx/Elf">PhotoSaverHelperService</asset>
+        <asset entryPointId="Extend" path="arm/o.le-v7/Extend.so"
+            entry="true" type="Qnx/Cascades">Extend.so</asset>
+        <asset entryPointId="ExtendService"
+            path="../ExtendService/arm/ExtendService"
+            type="Qnx/Elf">ExtendService</asset>
     </configuration>
 
     <configuration name="Device-Profile">
         <platformArchitecture>armle-v7</platformArchitecture>
         <entryPointType>Qnx/Elf</entryPointType>
 
-        <asset entryPointId="PhotoSaverHelper" path="arm-p/o.le-v7-g/PhotoSaverHelper"
-            entry="true" type="Qnx/Elf">PhotoSaverHelper</asset>
-        <asset entryPointId="PhotoSaverHelperService"
-            path="../PhotoSaverHelperService/arm/PhotoSaverHelperService"
-            type="Qnx/Elf">PhotoSaverHelperService</asset>
+        <asset entryPointId="Extend" path="arm-p/o.le-v7-g/Extend"
+            entry="true" type="Qnx/Elf">Extend</asset>
+        <asset entryPointId="ExtendService"
+            path="../ExtendService/arm/ExtendService"
+            type="Qnx/Elf">ExtendService</asset>
     </configuration>
 
     <configuration name="Simulator-Debug">
         <platformArchitecture>x86</platformArchitecture>
         <entryPointType>Qnx/Elf</entryPointType>
 
-        <asset entryPointId="PhotoSaverHelper" path="x86/o-g/PhotoSaverHelper"
-            entry="true" type="Qnx/Elf">PhotoSaverHelper</asset>
-        <asset entryPointId="PhotoSaverHelperService"
-            path="../PhotoSaverHelperService/x86/PhotoSaverHelperService"
-            type="Qnx/Elf">PhotoSaverHelperService</asset>
+        <asset entryPointId="Extend" path="x86/o-g/Extend"
+            entry="true" type="Qnx/Elf">Extend</asset>
+        <asset entryPointId="ExtendService"
+            path="../ExtendService/x86/ExtendService"
+            type="Qnx/Elf">ExtendService</asset>
     </configuration>
 
-    <entryPoint id="PhotoSaverHelper">
-        <name>PhotoSaverHelper</name>
+    <entryPoint id="Extend">
+        <name>Extend</name>
     </entryPoint>
 
-    <entryPoint id="PhotoSaverHelperService">
-        <name>PhotoSaverHelper Service</name>
+    <entryPoint id="ExtendService">
+        <name>Extend Service</name>
         <entryPointType>Qnx/Elf</entryPointType>
         <!-- Request permission to run a backend headless process. -->
         <permission system="true">_sys_run_headless</permission>
 		<permission system="true">_sys_headless_large</permission>
     </entryPoint>
 
-    <invoke-target id="com.CellNinja.PhotoSaverHelperService">
+    <invoke-target id="com.CellNinja.ExtendService">
         <invoke-target-type>application.headless</invoke-target-type>
-        <invoke-target-name>PhotoSaverHelper Service</invoke-target-name>
-        <entry-point-id>PhotoSaverHelperService</entry-point-id>
+        <invoke-target-name>Extend Service</invoke-target-name>
+        <entry-point-id>ExtendService</entry-point-id>
         <filter>
             <action>bb.action.system.STARTED</action>
             <mime-type>application/vnd.blackberry.system.event.STARTED</mime-type>
@@ -126,13 +126,13 @@
         </filter>
     </invoke-target>
 
-    <invoke-target id="com.CellNinja.PhotoSaverHelper">
+    <invoke-target id="com.CellNinja.Extend">
         <invoke-target-type>application</invoke-target-type>
-        <invoke-target-name>PhotoSaverHelper</invoke-target-name>
+        <invoke-target-name>Extend</invoke-target-name>
         <icon>
             <image>icon.png</image>
         </icon>
-        <entry-point-id>PhotoSaverHelper</entry-point-id>
+        <entry-point-id>Extend</entry-point-id>
     </invoke-target>
 
     <!-- Unique author ID assigned by signing authority. Required if using debug
@@ -160,7 +160,6 @@
     <!-- Request permission to post notification. -->
     <permission>post_notification</permission>
     <permission>access_shared</permission>
-    <permission system="true">_sys_run_headless</permission>
     <env var="LD_LIBRARY_PATH" value="app/native/lib:/usr/lib/qt4/lib" />
 
 </qnx>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>PhotoSaverHelper</name>
+	<name>Extend</name>
 	<comment></comment>
 	<projects>
-		<project>PhotoSaverHelperService</project>
+		<project>ExtendService</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

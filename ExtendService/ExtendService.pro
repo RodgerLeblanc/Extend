@@ -1,4 +1,4 @@
-APP_NAME = PhotoSaverHelperService
+APP_NAME = ExtendService
 
 CONFIG += qt warn_on
 
