@@ -19,6 +19,8 @@
 
 #include <QObject>
 #include <QTimer>
+#include <bb/platform/Notification>
+
 #include <src/DeviceActive/DeviceActive.h>
 #include <src/HeadlessCommunication/HeadlessCommunication.h>
 #include <src/ImageFileSignatureChecker/ImageFileSignatureChecker.h>
@@ -44,22 +46,25 @@ public:
     virtual ~Service();
 
 private slots:
-    void handleInvoke(const bb::system::InvokeRequest &);
+    void onInvoked(const bb::system::InvokeRequest &);
     void onDeviceActiveChanged(const bool&);
     void onImageFileSignatureCheckerError(QString, ImageFileSignatureCheckerError, QString);
     void onImageWithoutExtensionFound(const QString&);
-    void onNotificationKillerTimeout();
     void onReceivedData(QString);
 
 private:
-    bb::platform::Notification* createNotification(QString title, QString body, QString iconUrl);
+    int getImageRenamedCount();
+    QString getImageRenamedCountMessage();
     void notify(QString title, QString body, QString iconUrl = "");
     void notifyTemporarily(QString title, QString body, QString iconUrl = "");
+    QString setExtensionToFilePath(QString filePath);
+    bb::platform::Notification* setNotification(bb::platform::Notification* notif, QString title, QString body, QString iconUrl);
 
     DeviceActive* deviceActive;
     FolderWatcher* folderWatcher;
     HeadlessCommunication* headlessCommunication;
     bb::system::InvokeManager* invokeManager;
+    bb::platform::Notification* notification;
 };
 
 #endif /* SERVICE_H_ */

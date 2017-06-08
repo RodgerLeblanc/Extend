@@ -6,6 +6,7 @@
  */
 
 #include "ImageFileSignatureChecker.h"
+
 #include <src/Logger/Logger.h>
 
 #include <bb/data/JsonDataAccess>
@@ -31,25 +32,12 @@ ImageFileExtensionType ImageFileSignatureChecker::getImageFileType() {
     foreach(QString key, imageFileTypeSignaturesMap.keys()) {
         QStringList sigsForThisExtension = imageFileTypeSignaturesMap[key].toStringList();
         foreach(QString sig, sigsForThisExtension) {
-            sig.remove(" ");
-            int maxSigSize = qMin(thisSig.size(), sig.size());
-            if (thisSig.left(maxSigSize) == sig.left(maxSigSize)) {
+            if (signaturesMatch(thisSig, sig)) {
                 return this->getImageFileTypeByName(key);
             }
         }
     }
 
-    LOG("Image file type can't be retrieved");
-    return UNKNOWN;
-}
-
-ImageFileExtensionType ImageFileSignatureChecker::getImageFileTypeByName(QString name) {
-    for(int i = FIRST; i <= LAST; i++) {
-        ImageFileExtensionType thisType = (ImageFileExtensionType)i;
-        if (this->getImageFileTypeName(thisType) == name) {
-            return thisType;
-        }
-    }
     LOG("Image file type can't be retrieved");
     return UNKNOWN;
 }
@@ -65,6 +53,24 @@ QByteArray ImageFileSignatureChecker::getFileSignature() {
     }
     file.deleteLater();
     return sig.toHex().toUpper();
+}
+
+bool ImageFileSignatureChecker::signaturesMatch(QString sig1, QString sig2) {
+    sig1.remove(" ");
+    sig2.remove(" ");
+    int maxSigSize = qMin(sig1.size(), sig2.size());
+    return sig1.left(maxSigSize) == sig2.left(maxSigSize);
+}
+
+ImageFileExtensionType ImageFileSignatureChecker::getImageFileTypeByName(QString name) {
+    for(int i = FIRST_EXTENSION; i <= LAST_EXTENSION; i++) {
+        ImageFileExtensionType thisType = (ImageFileExtensionType)i;
+        if (this->getImageFileTypeName(thisType) == name) {
+            return thisType;
+        }
+    }
+    LOG("Image file type can't be retrieved");
+    return UNKNOWN;
 }
 
 QString ImageFileSignatureChecker::getImageFileTypeName(ImageFileExtensionType imageFileType) {
@@ -94,17 +100,22 @@ QString ImageFileSignatureChecker::setImageExtension(ImageFileExtensionType imag
         return filePath;
     }
 
-    QFile file(filePath);
     QString newFilePath = filePath + "." + extension;
+    bool ok = renameFile(filePath, newFilePath);
+
+    return ok ? newFilePath : filePath;
+}
+
+bool ImageFileSignatureChecker::renameFile(QString filePath, QString newFilePath) {
+    QFile file(filePath);
     while (QFile::exists(newFilePath)) {
         newFilePath.insert(newFilePath.lastIndexOf("."), "_copy");
     }
 
     bool ok = file.rename(newFilePath);
-
     if (!ok) {
         emit this->error(filePath, (ImageFileSignatureCheckerError)file.error(), file.errorString());
     }
 
-    return ok ? newFilePath : filePath;
+    return ok;
 }

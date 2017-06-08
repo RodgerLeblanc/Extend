@@ -24,8 +24,8 @@ typedef enum ImageFileExtensionType {
     PNG = 4,
     TIFF = 5,
 
-    FIRST = BMP,
-    LAST = TIFF
+    FIRST_EXTENSION = BMP,
+    LAST_EXTENSION = TIFF
 } ImageFileExtensionType;
 
 typedef enum ImageFileSignatureCheckerError {
@@ -62,6 +62,8 @@ private:
     QString getImageFileTypeName(ImageFileExtensionType imageFileType);
     ImageFileExtensionType getImageFileTypeByName(QString name);
     QByteArray getFileSignature();
+    bool renameFile(QString filePath, QString newFilePath);
+    bool signaturesMatch(QString sig1, QString sig2);
 
     QString filePath;
 

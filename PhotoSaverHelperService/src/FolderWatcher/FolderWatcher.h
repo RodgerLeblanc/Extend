@@ -8,8 +8,6 @@
 #ifndef FOLDERWATCHER_H_
 #define FOLDERWATCHER_H_
 
-#define SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY          "SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY"
-
 #include <QObject>
 #include <QFileSystemWatcher>
 #include <bb/device/SdCardInfo>
@@ -37,6 +35,7 @@ private slots:
     void onSdCardStateChanged(bb::device::SdCardState::Type);
 
 private:
+    bool alreadyWatching(QStringList defaultFolders);
     void cleanFolder(QString folderPath);
     QStringList getDefaultDeviceFolders();
     QStringList getDefaultSdFolders();

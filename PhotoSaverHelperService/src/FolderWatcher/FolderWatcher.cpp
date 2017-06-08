@@ -6,9 +6,11 @@
  */
 
 #include "FolderWatcher.h"
+
+#include <src/common.hpp>
 #include <src/Logger/Logger.h>
-#include "src/Settings/Settings.h"
-#include "src/ImageFileSignatureChecker/ImageFileSignatureChecker.h"
+#include <src/Settings/Settings.h>
+#include <src/ImageFileSignatureChecker/ImageFileSignatureChecker.h>
 
 #include <QStringList>
 #include <QDir>
@@ -51,14 +53,15 @@ void FolderWatcher::onSdCardStateChanged(SdCardState::Type sdCardState) {
         return;
     }
 
-    QStringList folders = this->getFolders();
-    QStringList defaultSdFolders = this->getDefaultSdFolders();
-    if (defaultSdFolders.isEmpty() || folders.contains(defaultSdFolders.first())) {
-        // Already watching SD card
+    if (this->alreadyWatching(this->getDefaultSdFolders())) {
         return;
     }
 
     this->addFoldersAndSubfolders(this->getDefaultSdFolders());
+}
+
+bool FolderWatcher::alreadyWatching(QStringList defaultFolders) {
+    return defaultFolders.isEmpty() || this->getFolders().contains(defaultFolders.first());
 }
 
 void FolderWatcher::onDirectoryChanged(const QString& folderPath) {
@@ -88,7 +91,7 @@ void FolderWatcher::onDirectoryChanged(const QString& folderPath) {
 
 QFileInfo FolderWatcher::getLastEntry(QString folderPath, QFileInfo defaultFileInfo) {
     QDir dir(folderPath);
-    QDir::Filters filters = QDir::Files | QDir::Hidden;
+    QDir::Filters filters = QDir::Files;
     QDir::SortFlags flags = QDir::Time;
     QFileInfoList fileInfoList = dir.entryInfoList(filters, flags);
 
