@@ -32,35 +32,25 @@ ApplicationUI::ApplicationUI() :
         invokeManager(new InvokeManager(this)),
         headlessCommunication(new HeadlessCommunication(this))
 {
+    connect(headlessCommunication, SIGNAL(receivedData(QString)), this, SLOT(onReceivedData(QString)));
+    connect(localeHandler, SIGNAL(systemLanguageChanged()), this, SLOT(onSystemLanguageChanged()));
+
     InvokeRequest request;
     request.setTarget("com.CellNinja.ExtendService");
     request.setAction("com.CellNinja.ExtendService.START");
     invokeManager->invoke(request);
 
-    // prepare the localization
-    if (!QObject::connect(localeHandler, SIGNAL(systemLanguageChanged()),
-            this, SLOT(onSystemLanguageChanged()))) {
-        // This is an abnormal situation! Something went wrong!
-        // Add own code to recover here
-        qWarning() << "Recovering from a failed connect()";
-    }
-
-    connect(headlessCommunication, SIGNAL(receivedData(QString)), this, SLOT(onReceivedData(QString)));
-
-    // initial load
     onSystemLanguageChanged();
 
-    // Create scene document from main.qml asset, the parent is set
-    // to ensure the document gets destroyed properly at shut down.
+    deviceInfoMap.insert("height", getenv("HEIGHT"));
+    deviceInfoMap.insert("width", getenv("WIDTH"));
+    deviceInfoMap.insert("coverWidth", getenv("COVERWIDTH"));
+    deviceInfoMap.insert("coverHeight", getenv("COVERHEIGHT"));
+    emit this->deviceInfoChanged(deviceInfoMap);
+
     QmlDocument *qml = QmlDocument::create("asset:///main.qml").parent(this);
-
-    // Make app available to the qml.
     qml->setContextProperty("app", this);
-
-    // Create root object for the UI
     AbstractPane *root = qml->createRootObject<AbstractPane>();
-
-    // Set created root object as the application scene
     Application::instance()->setScene(root);
 }
 

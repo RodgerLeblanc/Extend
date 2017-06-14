@@ -62,6 +62,7 @@ private:
     QString getImageFileTypeName(ImageFileExtensionType imageFileType);
     ImageFileExtensionType getImageFileTypeByName(QString name);
     QByteArray getFileSignature();
+    static bool isAnImageNotHandledByQImage(QString filePath);
     bool renameFile(QString filePath, QString newFilePath);
     bool signaturesMatch(QString sig1, QString sig2);
 

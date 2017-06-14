@@ -20,7 +20,21 @@ ImageFileSignatureChecker::ImageFileSignatureChecker(QString filePath, QObject* 
 
 bool ImageFileSignatureChecker::isAnImage(QString filePath) {
     QImage image(filePath);
-    return !image.isNull();
+    return !image.isNull() || ImageFileSignatureChecker::isAnImageNotHandledByQImage(filePath);
+}
+
+bool ImageFileSignatureChecker::isAnImageNotHandledByQImage(QString filePath) {
+    QByteArray sig;
+    QFile file(filePath);
+    if (file.open(QIODevice::ReadOnly))
+    {
+        sig = file.read(16);
+        file.flush();
+        file.close();
+    }
+    file.deleteLater();
+    sig = sig.toHex().toUpper();
+    return sig.startsWith("FFD8FFED");
 }
 
 ImageFileExtensionType ImageFileSignatureChecker::getImageFileType() {

@@ -39,6 +39,9 @@ class QTranslator;
 class ApplicationUI: public QObject
 {
     Q_OBJECT
+
+    Q_PROPERTY(QVariantMap deviceInfo READ deviceInfo NOTIFY deviceInfoChanged);
+
 public:
     ApplicationUI();
     virtual ~ApplicationUI() { }
@@ -51,11 +54,18 @@ private slots:
     void onSystemLanguageChanged();
 
 private:
+    QVariantMap deviceInfo() { return deviceInfoMap; }
+
     QTranslator* translator;
     bb::cascades::LocaleHandler* localeHandler;
     bb::system::InvokeManager* invokeManager;
 
     HeadlessCommunication* headlessCommunication;
+
+    QVariantMap deviceInfoMap;
+
+signals:
+    void deviceInfoChanged(const QVariantMap&);
 };
 
 #endif /* ApplicationUI_HPP_ */

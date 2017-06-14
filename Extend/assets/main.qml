@@ -15,28 +15,74 @@
  */
 
 import bb.cascades 1.3
+import "StartScreens"
 
 Page {
+    id: mainPage
+    property variant mainBackground: Color.create("#404040")
+    property int generalAnimationDelay: 500
+    property int generalAnimationDuration: 500
+
+    attachedObjects: [
+        RenderFence {
+            raised: true
+            onReached: {
+                background.startAnimation()
+            }
+        },
+        AppCover { id: activeFrame }
+    ]
+    
+    function reset() {
+        background.startAnimation()
+    }
+    
+    onCreationCompleted: {
+        Application.menuEnabled = false
+        Application.setCover(activeFrame)
+        Application.fullscreen.connect(reset)
+    }
+    
     Container {
-        TextField {
-            id: textField
-            text: "Message"
-        }
-        Button {
-            text: "Send To HL"
-            onClicked: { app.sendToHl(textField.text) }
+        id: mainContainer
+        layout: DockLayout {}
+        background: mainPage.mainBackground
+        horizontalAlignment: HorizontalAlignment.Fill
+        verticalAlignment: VerticalAlignment.Fill
+        
+        Background {
+            id: background
+            onAnimationEnded: {
+                first.startAnimation()
+            }
         }
         
-        Container {
-            layout: StackLayout { orientation: LayoutOrientation.LeftToRight }
-            topPadding: ui.du(50)
-            Button {
-                text: qsTr("Print log to Hub") + Retranslate.onLocaleOrLanguageChanged
-                onClicked: { app.sendToHl("LOG_TO_HUB"); }
+        First {
+            id: first
+            onAnimationEnded: {
+                second.startAnimation()
             }
-            Button {
-                text: qsTr("Shutdown") + Retranslate.onLocaleOrLanguageChanged
-                onClicked: { app.shutdown(); }
+        }
+
+        Second {
+            id: second
+            onAnimationEnded: {
+                third.startAnimation()
+            }
+        }
+
+        Third {
+            id: third
+            onAnimationEnded: {
+                fourth.startAnimation()
+            }
+        }
+
+        Fourth {
+            id: fourth
+            onAnimationEnded: {
+                first.startFinalAnimation()
+                third.startFinalAnimation()
             }
         }
     }

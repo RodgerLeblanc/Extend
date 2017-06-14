@@ -38,8 +38,10 @@ Service::Service() :
 {
     Notification::deleteAllFromInbox();
 
+    invokeManager->connect(invokeManager, SIGNAL(invoked(const bb::system::InvokeRequest&)),
+                this, SLOT(onInvoked(const bb::system::InvokeRequest&)));
+
 //    connect(deviceActive, SIGNAL(deviceActiveChanged(const bool&)), this, SLOT(onDeviceActiveChanged(const bool&)));
-    connect(invokeManager, SIGNAL(invoked(const InvokeRequest&)), this, SLOT(handleInvoke(const InvokeRequest&)));
     connect(headlessCommunication, SIGNAL(receivedData(QString)), this, SLOT(onReceivedData(QString)));
     connect(folderWatcher, SIGNAL(imageWithoutExtensionFound(const QString&)), this, SLOT(onImageWithoutExtensionFound(const QString&)));
 

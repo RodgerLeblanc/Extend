@@ -38,12 +38,15 @@
         An updated version of application must have a versionNumber value higher
         than the previous version. Required. -->
     <versionNumber>1.0.0</versionNumber>
+    <icon>
+       <image>ExtendLogo_144.png</image>
+    </icon>
     <platformVersion>10.3.0</platformVersion>
     <description>Rename pictures saved without extension.</description>
 
     <!-- Fourth digit segment of the package version. First three segments are
         taken from the <versionNumber> element. Must be an integer from 0 to 2^16-1 -->
-    <buildId>1</buildId>
+    <buildId>3</buildId>
 
     <!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents
         the version of the application, as it should be shown to users. Optional. -->
@@ -112,7 +115,7 @@
         <entryPointType>Qnx/Elf</entryPointType>
         <!-- Request permission to run a backend headless process. -->
         <permission system="true">_sys_run_headless</permission>
-		<permission system="true">_sys_headless_large</permission>
+        <permission system="true">_sys_headless_large</permission>
     </entryPoint>
 
     <invoke-target id="com.CellNinja.ExtendService">
@@ -130,7 +133,7 @@
         <invoke-target-type>application</invoke-target-type>
         <invoke-target-name>Extend</invoke-target-name>
         <icon>
-            <image>icon.png</image>
+            <image>ExtendLogo_144.png</image>
         </icon>
         <entry-point-id>Extend</entry-point-id>
     </invoke-target>
@@ -140,26 +143,25 @@
     <!-- <authorId>ABC1234YjsnUk235h</authorId> -->
 
     <initialWindow>
-        <autoOrients>true</autoOrients>
+        <autoOrients>false</autoOrients>
+        <aspectRatio>portrait</aspectRatio>
         <systemChrome>none</systemChrome>
     </initialWindow>
 
     <!-- The icon for the application, which should be 114x114. -->
-    <icon>
-        <image>icon.png</image>
-    </icon>
 
-    <asset path="icon.png">icon.png</asset>
     <asset path="assets">assets</asset>
 
     <!-- Locale support -->
     <asset path="translations" dest="qm">
         <include name="*.qm" />
     </asset>
+    <asset path="ExtendLogo_144.png">ExtendLogo_144.png</asset>
 
     <!-- Request permission to post notification. -->
     <permission>post_notification</permission>
     <permission>access_shared</permission>
     <env var="LD_LIBRARY_PATH" value="app/native/lib:/usr/lib/qt4/lib" />
+    <env var="CASCADES_THEME" value="dark"/>
 
 </qnx>

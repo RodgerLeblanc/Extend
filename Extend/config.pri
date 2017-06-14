@@ -36,7 +36,21 @@ simulator {
 
 config_pri_assets {
     OTHER_FILES += \
+        $$quote($$BASEDIR/assets/AppCover.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/Background.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/First.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/Fourth.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/Second.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/Third.qml) \
         $$quote($$BASEDIR/assets/imageFileTypeSignatures.json) \
+        $$quote($$BASEDIR/assets/images/AwesomePic.png) \
+        $$quote($$BASEDIR/assets/images/AwesomePicPositioned.png) \
+        $$quote($$BASEDIR/assets/images/AwesomePicRenamedPositioned.png) \
+        $$quote($$BASEDIR/assets/images/Background.png) \
+        $$quote($$BASEDIR/assets/images/ExtendLogo_1440.png) \
+        $$quote($$BASEDIR/assets/images/PassportAllBlurExceptAwesomePicRenamedTransparentBackground.png) \
+        $$quote($$BASEDIR/assets/images/PassportAllBlurIncludingAwesomePicRenamedTransparentBackground.png) \
+        $$quote($$BASEDIR/assets/images/PassportAllBlurTransparentBackground.png) \
         $$quote($$BASEDIR/assets/main.qml)
 }
 
@@ -81,7 +95,13 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/Logger/HeapUsage/*.cxx) \
         $$quote($$BASEDIR/../assets/*.qml) \
         $$quote($$BASEDIR/../assets/*.js) \
-        $$quote($$BASEDIR/../assets/*.qs)
+        $$quote($$BASEDIR/../assets/*.qs) \
+        $$quote($$BASEDIR/../assets/StartScreens/*.qml) \
+        $$quote($$BASEDIR/../assets/StartScreens/*.js) \
+        $$quote($$BASEDIR/../assets/StartScreens/*.qs) \
+        $$quote($$BASEDIR/../assets/images/*.qml) \
+        $$quote($$BASEDIR/../assets/images/*.js) \
+        $$quote($$BASEDIR/../assets/images/*.qs)
 
     HEADERS += \
         $$quote($$BASEDIR/../src/*.h) \
