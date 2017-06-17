@@ -49,6 +49,18 @@ Service::Service() :
     settings.setPreview(NotificationPriorityPolicy::Allow);
     settings.apply();
 
+    // Next code will reopen ProtectMe in case it gets terminated
+    InvokeReply* reply = invokeManager->deregisterTimer(REGISTER_TIMER_NAME);
+    connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+
+    InvokeRecurrenceRule recurrenceRule(bb::system::InvokeRecurrenceRuleFrequency::Minutely);
+    recurrenceRule.setInterval(6); // Minimum valid interval for Minutely frequency
+    if (recurrenceRule.isValid()) {
+        InvokeTimerRequest invokeTimerRequest(REGISTER_TIMER_NAME, recurrenceRule, HEADLESS_INVOCATION_TARGET);
+        InvokeReply* reply2 = invokeManager->registerTimer(invokeTimerRequest);
+        connect(reply2, SIGNAL(finished()), reply2, SLOT(deleteLater()));
+    }
+
     QMetaObject::invokeMethod(folderWatcher, "cleanWatchedFolders", Qt::QueuedConnection);
 }
 
@@ -64,7 +76,11 @@ void Service::onDeviceActiveChanged(const bool& deviceActive) {
 void Service::onInvoked(const bb::system::InvokeRequest & request) {
     QString action = request.action().split(".").last();
 
-    if (action == "SHUTDOWN") {
+    if (action == "TIMER_FIRED") {
+        return;
+    }
+
+    if (request.action() == HEADLESS_INVOCATION_SHUTDOWN_ACTION) {
         bb::Application::instance()->quit();
     }
 }

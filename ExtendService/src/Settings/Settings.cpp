@@ -180,7 +180,7 @@ void Settings::setValue(QString key, QVariant value)
     // If there is already an item with the key key, that item's value is
     // replaced with value.
 
-    qDebug() << "HL - Settings::setValue ->" << key << ":" << value;
+//    qDebug() << "HL - Settings::setValue ->" << key << ":" << value;
 
     settings.remove(key);
     settings.insert(key, value);

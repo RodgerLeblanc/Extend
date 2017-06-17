@@ -18,6 +18,7 @@ class FolderWatcher : public QObject
 
 public:
     FolderWatcher(QObject *_parent = NULL);
+    virtual ~FolderWatcher();
 
     void addFolder(QString folder);
     void addFolders(QStringList folders);
@@ -43,6 +44,7 @@ private:
     bool isFileWithoutExtension(QString filePath);
     bool isWatchingDefaultFolders(QStringList defaultFoldersList);
     void saveFolders();
+    bool shouldBeWatched(QString folder);
 
     QFileSystemWatcher* fileSystemWatcher;
     bb::device::SdCardInfo* sdCardInfo;

@@ -29,6 +29,7 @@ FolderWatcher::FolderWatcher(QObject *_parent) :
     this->addFoldersAndSubfolders(this->getDefaultDeviceFolders());
     this->addFoldersAndSubfolders(this->getDefaultSdFolders());
 
+    /*
     Settings* settings = Settings::instance();
     QStringList folders = settings->value(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, "").toStringList();
     folders.append(this->getFolders());
@@ -36,6 +37,11 @@ FolderWatcher::FolderWatcher(QObject *_parent) :
     if (!folders.isEmpty()) {
         this->addFolders(folders);
     }
+    */
+}
+
+FolderWatcher::~FolderWatcher() {
+    this->saveFolders();
 }
 
 bool FolderWatcher::isWatchingDefaultFolders(QStringList defaultFoldersList) {
@@ -109,13 +115,17 @@ bool FolderWatcher::isFileWithoutExtension(QString filePath) {
 
 QStringList FolderWatcher::getDefaultDeviceFolders() {
     QStringList folders;
-    folders.append(QString(getenv("PERIMETER_HOME")) + "/shared/photos/");
+    folders.append(QString(getenv("PERIMETER_HOME")) + "/shared/camera");
+    folders.append(QString(getenv("PERIMETER_HOME")) + "/shared/documents");
+    folders.append(QString(getenv("PERIMETER_HOME")) + "/shared/downloads");
+    folders.append(QString(getenv("PERIMETER_HOME")) + "/shared/misc");
+    folders.append(QString(getenv("PERIMETER_HOME")) + "/shared/photos");
     return folders;
 }
 
 QStringList FolderWatcher::getDefaultSdFolders() {
     QStringList folders;
-    folders.append(QString(getenv("PERIMETER_HOME")) + "/removable/sdcard/photos/");
+    folders.append(QString(getenv("PERIMETER_HOME")) + "/removable/sdcard/");
     return folders;
 }
 
@@ -123,21 +133,27 @@ void FolderWatcher::addFolder(QString folder) {
     if (fileSystemWatcher->directories().contains(folder))
         return;
 
+    if (!shouldBeWatched(folder)) {
+        return;
+    }
+
     this->cleanFolder(folder);
     fileSystemWatcher->addPath(folder);
-    this->saveFolders();
 }
 
 void FolderWatcher::addFolders(QStringList folders) {
     fileSystemWatcher->addPaths(folders);
-    this->saveFolders();
 }
 
 void FolderWatcher::addFolderAndSubfolders(QString folder) {
+    if (!shouldBeWatched(folder)) {
+        return;
+    }
+
     this->addFolder(folder);
 
     QDir dir(folder);
-    QDir::Filters filters = QDir::Dirs | QDir::NoDotAndDotDot;
+    QDir::Filters filters = QDir::Dirs | QDir::NoDotAndDotDot; //  | QDir::NoSymLinks
     QFileInfoList fileInfoList = dir.entryInfoList(filters);
 
     foreach(QFileInfo fileInfo, fileInfoList) {
@@ -145,6 +161,26 @@ void FolderWatcher::addFolderAndSubfolders(QString folder) {
             this->addFolderAndSubfolders(fileInfo.absoluteFilePath());
         }
     }
+}
+
+bool FolderWatcher::shouldBeWatched(QString folder) {
+    QFileInfo fileInfo(folder);
+    if (fileInfo.isSymLink()) {
+        qDebug() << "********** isSymLink():" << folder;
+        return false;
+    }
+
+    QString boxFolderPath = QString(getenv("PERIMETER_HOME")) + "/shared/Box";
+    QString dropboxFolderPath = QString(getenv("PERIMETER_HOME")) + "/shared/Dropbox";
+    QString androidFolderPath = QString(getenv("PERIMETER_HOME")) + "/shared/misc/android";
+    if (folder.contains(boxFolderPath, Qt::CaseInsensitive) ||
+            folder.contains(dropboxFolderPath, Qt::CaseInsensitive) ||
+            folder.contains(androidFolderPath, Qt::CaseInsensitive)) {
+        qDebug() << "********** contains Box, Dropbox or Android:" << folder;
+        return false;
+    }
+
+    return true;
 }
 
 void FolderWatcher::addFoldersAndSubfolders(QStringList folders) {
@@ -155,12 +191,10 @@ void FolderWatcher::addFoldersAndSubfolders(QStringList folders) {
 
 void FolderWatcher::removeFolder(QString folder) {
     fileSystemWatcher->removePath(folder);
-    this->saveFolders();
 }
 
 void FolderWatcher::removeFolders(QStringList folders) {
     fileSystemWatcher->removePaths(folders);
-    this->saveFolders();
 }
 
 QStringList FolderWatcher::getFolders() {

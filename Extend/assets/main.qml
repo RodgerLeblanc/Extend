@@ -19,9 +19,9 @@ import "StartScreens"
 
 Page {
     id: mainPage
-    property variant mainBackground: Color.create("#404040")
-    property int generalAnimationDelay: 500
-    property int generalAnimationDuration: 500
+    property variant mainBackground: Color.create("#000000")
+    property int generalAnimationDelay: 750
+    property int generalAnimationDuration: 750
 
     attachedObjects: [
         RenderFence {
@@ -34,6 +34,7 @@ Page {
     ]
     
     function reset() {
+        mainContainer.translationY = 0
         background.startAnimation()
     }
     
@@ -49,6 +50,7 @@ Page {
         background: mainPage.mainBackground
         horizontalAlignment: HorizontalAlignment.Fill
         verticalAlignment: VerticalAlignment.Fill
+        translationY: 0
         
         Background {
             id: background
@@ -76,14 +78,31 @@ Page {
             onAnimationEnded: {
                 fourth.startAnimation()
             }
+            onSecondAnimationEnded: {
+                fifth.startAnimation()
+            }
         }
 
         Fourth {
             id: fourth
             onAnimationEnded: {
-                first.startFinalAnimation()
-                third.startFinalAnimation()
+                first.startSecondAnimation()
+                third.startSecondAnimation()
             }
+        }
+        
+        Fifth {
+            id: fifth
+            onAnimationEnded: {
+                background.startSecondAnimation()
+                third.startThirdAnimation()
+                fifth.startSecondAnimation()
+                sixth.startAnimation()
+            }
+        }
+        
+        Sixth {
+            id: sixth
         }
     }
 }

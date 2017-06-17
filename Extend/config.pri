@@ -38,9 +38,11 @@ config_pri_assets {
     OTHER_FILES += \
         $$quote($$BASEDIR/assets/AppCover.qml) \
         $$quote($$BASEDIR/assets/StartScreens/Background.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/Fifth.qml) \
         $$quote($$BASEDIR/assets/StartScreens/First.qml) \
         $$quote($$BASEDIR/assets/StartScreens/Fourth.qml) \
         $$quote($$BASEDIR/assets/StartScreens/Second.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/Sixth.qml) \
         $$quote($$BASEDIR/assets/StartScreens/Third.qml) \
         $$quote($$BASEDIR/assets/imageFileTypeSignatures.json) \
         $$quote($$BASEDIR/assets/images/AwesomePic.png) \

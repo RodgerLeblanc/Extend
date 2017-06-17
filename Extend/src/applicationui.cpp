@@ -15,6 +15,7 @@
  */
 
 #include "applicationui.hpp"
+#include "common.hpp"
 
 #include <bb/cascades/Application>
 #include <bb/cascades/QmlDocument>
@@ -36,8 +37,8 @@ ApplicationUI::ApplicationUI() :
     connect(localeHandler, SIGNAL(systemLanguageChanged()), this, SLOT(onSystemLanguageChanged()));
 
     InvokeRequest request;
-    request.setTarget("com.CellNinja.ExtendService");
-    request.setAction("com.CellNinja.ExtendService.START");
+    request.setTarget(HEADLESS_INVOCATION_TARGET);
+    request.setAction(HEADLESS_INVOCATION_START_ACTION);
     invokeManager->invoke(request);
 
     onSystemLanguageChanged();
@@ -76,8 +77,8 @@ void ApplicationUI::sendToHl(QString message) {
 void ApplicationUI::shutdown()
 {
     InvokeRequest request;
-    request.setTarget("com.CellNinja.ExtendService");
-    request.setAction("com.CellNinja.ExtendService.SHUTDOWN");
+    request.setTarget(HEADLESS_INVOCATION_TARGET);
+    request.setAction(HEADLESS_INVOCATION_SHUTDOWN_ACTION);
     invokeManager->invoke(request);
 
     Application::instance()->quit();

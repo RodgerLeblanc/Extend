@@ -24,6 +24,13 @@
 #define SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY      "SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY"
 #define SETTINGS_IMAGE_RENAMED_COUNT                "IMAGE_RENAMED_COUNT"
 
+#define REGISTER_TIMER_NAME                         "RESTART_EXTEND"
+
+#define UI_INVOCATION_TARGET                        "com.CellNinja.Extend"
+#define HEADLESS_INVOCATION_TARGET                  "com.CellNinja.ExtendService"
+#define HEADLESS_INVOCATION_START_ACTION            "com.CellNinja.ExtendService.START"
+#define HEADLESS_INVOCATION_SHUTDOWN_ACTION         "com.CellNinja.ExtendService.SHUTDOWN"
+
 #define UI_LISTENING_PORT                           17265
 #define HEADLESS_LISTENING_PORT                     17266
 

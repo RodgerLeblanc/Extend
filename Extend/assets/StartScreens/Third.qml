@@ -2,21 +2,32 @@ import bb.cascades 1.3
 
 ImageView {
     signal animationEnded()
+    signal secondAnimationEnded()
     
     function startAnimation() {
         mainAnimation.play()
     }
     
-    function startFinalAnimation() {
-        finalAnimation.play()
+    function startSecondAnimation() {
+        secondAnimation.play()
+    }
+    
+    function startThirdAnimation() {
+        thirdAnimation.play()
     }
     
     function reset() {
         if (mainAnimation.state == AnimationState.Playing || mainAnimation.state == AnimationState.Started) {
             mainAnimation.stop()
         }
+        if (mainAnimation2.state == AnimationState.Playing || mainAnimation2.state == AnimationState.Started) {
+            mainAnimation.stop()
+        }
         if (secondAnimation.state == AnimationState.Playing || secondAnimation.state == AnimationState.Started) {
             secondAnimation.stop()
+        }
+        if (thirdAnimation.state == AnimationState.Playing || thirdAnimation.state == AnimationState.Started) {
+            thirdAnimation.stop()
         }
         translationX = 0 - app.deviceInfo.width
         translationY = app.deviceInfo.height / 6
@@ -38,11 +49,11 @@ ImageView {
             onEnded: { 
                 first.imageSource = "asset:///images/PassportAllBlurIncludingAwesomePicRenamedTransparentBackground.png"
                 second.imageSource = "asset:///images/AwesomePicRenamedPositioned.png" 
-                secondAnimation.play()
+                mainAnimation2.play()
             }
         },
         TranslateTransition {
-            id: secondAnimation
+            id: mainAnimation2
             fromX: mainAnimation.toX
             toX: app.deviceInfo.width
             delay: mainPage.generalAnimationDelay
@@ -50,22 +61,29 @@ ImageView {
             onEnded: { animationEnded() }
         },
         TranslateTransition {
-            id: finalAnimation
-            fromX: secondAnimation.toX
+            id: secondAnimation
+            fromX: mainAnimation2.toX
             toX: mainAnimation.toX
             delay: mainPage.generalAnimationDelay
             duration: mainPage.generalAnimationDuration * 2
             onStarted: {
                 translationY = (app.deviceInfo.height / 2) - (minHeight / 2)
             }
-            onEnded: {  }
+            onEnded: { secondAnimationEnded() }
+        },
+        TranslateTransition {
+            id: thirdAnimation
+            fromY: translationY
+            toY: 0 - app.deviceInfo.height
+            delay: mainPage.generalAnimationDelay * 2
+            duration: mainPage.generalAnimationDuration * 2
         }
     ]
     
     translationX: 0 - app.deviceInfo.width
     translationY: app.deviceInfo.height / 6
 
-    minWidth: app.deviceInfo.width/ 2
+    minWidth: app.deviceInfo.width * 0.65
     maxWidth: minWidth
     minHeight: minWidth
     maxHeight: minWidth

@@ -6,17 +6,10 @@ Container {
     function startAnimation() {
         mainAnimation.play()
     }
-
-    function startSecondAnimation() {
-        secondAnimation.play()
-    }
     
     function reset() {
         if (mainAnimation.state == AnimationState.Playing || mainAnimation.state == AnimationState.Started) {
             mainAnimation.stop()
-        }
-        if (secondAnimation.state == AnimationState.Playing || secondAnimation.state == AnimationState.Started) {
-            secondAnimation.stop()
         }
         translationY = app.deviceInfo.height
     }
@@ -25,33 +18,33 @@ Container {
         reset()
         Application.thumbnail.connect(reset)
     }
-
+    
     animations: [
         TranslateTransition {
             id: mainAnimation
             fromY: app.deviceInfo.height
             toY: 0
-            delay: mainPage.generalAnimationDelay
-            duration: mainPage.generalAnimationDuration
-            onEnded: { animationEnded() }
-        },
-        TranslateTransition {
-            id: secondAnimation
-            fromY: translationY
-            toY: 0 - app.deviceInfo.height
             delay: mainPage.generalAnimationDelay * 2
             duration: mainPage.generalAnimationDuration * 2
         }
     ]
     
-    translationY: app.deviceInfo.height
+    horizontalAlignment: HorizontalAlignment.Center
     verticalAlignment: VerticalAlignment.Center
-
-    ImageView {
-        imageSource: "asset:///images/Background.png"
-        scalingMethod: ScalingMethod.AspectFit
-        minWidth: app.deviceInfo.width
-        maxWidth: minWidth
+    translationY: app.deviceInfo.height
+        
+    Label {
+        text: qsTr("This app runs in the background, you don't need to keep it open as an active frame. There are no settings whatsoever, you just keep it installed and it will automatically rename any picture that is saved without an extension.")
         horizontalAlignment: HorizontalAlignment.Center
+        textStyle.fontSize: FontSize.Medium
+        textStyle.textAlign: TextAlign.Justify
+        multiline: true
+    }
+    Label {
+        text: qsTr("Supports: BMP, ICO, JPG, GIF, PNG, TIFF")
+        horizontalAlignment: HorizontalAlignment.Center
+        textStyle.fontSize: FontSize.Medium
+        textStyle.textAlign: TextAlign.Center
+        multiline: true
     }
 }

@@ -11,13 +11,16 @@ Container {
         mainAnimation.play()
     }
     
-    function startFinalAnimation() {
-        finalAnimation.play()
+    function startSecondAnimation() {
+        secondAnimation.play()
     }
     
     function reset() {
         if (mainAnimation.state == AnimationState.Playing || mainAnimation.state == AnimationState.Started) {
             mainAnimation.stop()
+        }
+        if (secondAnimation.state == AnimationState.Playing || secondAnimation.state == AnimationState.Started) {
+            secondAnimation.stop()
         }
         translationX = app.deviceInfo.width
         scaleX = 1
@@ -40,7 +43,7 @@ Container {
             onEnded: { animationEnded() }
         },
         ScaleTransition {
-            id: finalAnimation
+            id: secondAnimation
             fromX: 1
             toX: 0
             fromY: fromX
@@ -57,12 +60,14 @@ Container {
     minWidth: app.deviceInfo.width
     maxWidth: minWidth
     
+    verticalAlignment: VerticalAlignment.Center
+    
     ImageView {
         id: image
         horizontalAlignment: HorizontalAlignment.Center
         imageSource: first.imageSource
-        scalingMethod: ScalingMethod.None
-        minHeight: app.deviceInfo.height
-        maxHeight: minHeight
+        scalingMethod: ScalingMethod.AspectFit
+        minWidth: app.deviceInfo.width * 0.75
+        maxWidth: minWidth
     }
 }

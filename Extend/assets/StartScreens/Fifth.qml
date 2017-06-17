@@ -6,7 +6,7 @@ Container {
     function startAnimation() {
         mainAnimation.play()
     }
-
+    
     function startSecondAnimation() {
         secondAnimation.play()
     }
@@ -18,21 +18,22 @@ Container {
         if (secondAnimation.state == AnimationState.Playing || secondAnimation.state == AnimationState.Started) {
             secondAnimation.stop()
         }
-        translationY = app.deviceInfo.height
+        opacity = 0
+        translationY = 0
     }
     
     onCreationCompleted: {
         reset()
         Application.thumbnail.connect(reset)
     }
-
+    
     animations: [
-        TranslateTransition {
+        FadeTransition {
             id: mainAnimation
-            fromY: app.deviceInfo.height
-            toY: 0
+            fromOpacity: 0
+            toOpacity: 1
             delay: mainPage.generalAnimationDelay
-            duration: mainPage.generalAnimationDuration
+            duration: mainPage.generalAnimationDuration * 2
             onEnded: { animationEnded() }
         },
         TranslateTransition {
@@ -43,15 +44,25 @@ Container {
             duration: mainPage.generalAnimationDuration * 2
         }
     ]
-    
-    translationY: app.deviceInfo.height
-    verticalAlignment: VerticalAlignment.Center
 
-    ImageView {
-        imageSource: "asset:///images/Background.png"
-        scalingMethod: ScalingMethod.AspectFit
-        minWidth: app.deviceInfo.width
-        maxWidth: minWidth
+    opacity: 0
+    
+    horizontalAlignment: HorizontalAlignment.Center
+    verticalAlignment: VerticalAlignment.Bottom
+    
+    bottomPadding: ui.du(5)
+    
+    Label {
+        text: Application.applicationName
         horizontalAlignment: HorizontalAlignment.Center
+        textStyle.fontSize: FontSize.XLarge
+        textStyle.color: Color.White
+    }
+    Label {
+        text: qsTr("Automatically rename pictures without extension")
+        horizontalAlignment: HorizontalAlignment.Center
+        textStyle.fontSize: app.deviceInfo.width > 768 ? FontSize.Medium : FontSize.Small
+        textStyle.textAlign: TextAlign.Center
+        multiline: true
     }
 }

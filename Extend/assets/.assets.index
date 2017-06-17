@@ -1,5 +1,5 @@
 1
-16
+18
 AppCover.qml
 imageFileTypeSignatures.json
 images/AwesomePic.png
@@ -12,7 +12,9 @@ images/PassportAllBlurIncludingAwesomePicRenamedTransparentBackground.png
 images/PassportAllBlurTransparentBackground.png
 main.qml
 StartScreens/Background.qml
+StartScreens/Fifth.qml
 StartScreens/First.qml
 StartScreens/Fourth.qml
 StartScreens/Second.qml
+StartScreens/Sixth.qml
 StartScreens/Third.qml
