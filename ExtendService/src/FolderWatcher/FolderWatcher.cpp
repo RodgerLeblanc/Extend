@@ -28,21 +28,9 @@ FolderWatcher::FolderWatcher(QObject *_parent) :
 
     this->addFoldersAndSubfolders(this->getDefaultDeviceFolders());
     this->addFoldersAndSubfolders(this->getDefaultSdFolders());
-
-    /*
-    Settings* settings = Settings::instance();
-    QStringList folders = settings->value(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, "").toStringList();
-    folders.append(this->getFolders());
-    folders.removeDuplicates();
-    if (!folders.isEmpty()) {
-        this->addFolders(folders);
-    }
-    */
 }
 
-FolderWatcher::~FolderWatcher() {
-    this->saveFolders();
-}
+FolderWatcher::~FolderWatcher() {}
 
 bool FolderWatcher::isWatchingDefaultFolders(QStringList defaultFoldersList) {
     QStringList folders = this->getFolders();
@@ -153,7 +141,7 @@ void FolderWatcher::addFolderAndSubfolders(QString folder) {
     this->addFolder(folder);
 
     QDir dir(folder);
-    QDir::Filters filters = QDir::Dirs | QDir::NoDotAndDotDot; //  | QDir::NoSymLinks
+    QDir::Filters filters = QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks;
     QFileInfoList fileInfoList = dir.entryInfoList(filters);
 
     foreach(QFileInfo fileInfo, fileInfoList) {
@@ -166,7 +154,6 @@ void FolderWatcher::addFolderAndSubfolders(QString folder) {
 bool FolderWatcher::shouldBeWatched(QString folder) {
     QFileInfo fileInfo(folder);
     if (fileInfo.isSymLink()) {
-        qDebug() << "********** isSymLink():" << folder;
         return false;
     }
 
@@ -176,7 +163,6 @@ bool FolderWatcher::shouldBeWatched(QString folder) {
     if (folder.contains(boxFolderPath, Qt::CaseInsensitive) ||
             folder.contains(dropboxFolderPath, Qt::CaseInsensitive) ||
             folder.contains(androidFolderPath, Qt::CaseInsensitive)) {
-        qDebug() << "********** contains Box, Dropbox or Android:" << folder;
         return false;
     }
 
@@ -199,13 +185,6 @@ void FolderWatcher::removeFolders(QStringList folders) {
 
 QStringList FolderWatcher::getFolders() {
     return fileSystemWatcher->directories();
-}
-
-void FolderWatcher::saveFolders() {
-    Settings* settings = Settings::instance();
-    QStringList folders = this->getFolders();
-    folders.removeDuplicates();
-    settings->setValue(SETTINGS_FILESYSTEMWATCHER_FOLDERS_KEY, folders);
 }
 
 void FolderWatcher::cleanFolder(QString folderPath) {

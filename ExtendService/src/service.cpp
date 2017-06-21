@@ -49,7 +49,7 @@ Service::Service() :
     settings.setPreview(NotificationPriorityPolicy::Allow);
     settings.apply();
 
-    // Next code will reopen ProtectMe in case it gets terminated
+    // Next code will reopen Extend in case it gets terminated
     InvokeReply* reply = invokeManager->deregisterTimer(REGISTER_TIMER_NAME);
     connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
 
@@ -151,7 +151,7 @@ QString Service::getImageRenamedCountMessage() {
     message += "\n\n";
     message += QString(tr("If you want to rate this app in BlackBerry World and tell the world how great it is, click on this link :"));
     message += "\n";
-    message += "http://appworld.blackberry.com/webstore/content/59997180";
+    message += "http://appworld.blackberry.com/webstore/content/60002920";
     return message;
 }
 

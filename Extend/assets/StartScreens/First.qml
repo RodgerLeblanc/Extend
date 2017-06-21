@@ -59,7 +59,7 @@ Container {
 
     minWidth: app.deviceInfo.width
     maxWidth: minWidth
-    
+
     verticalAlignment: VerticalAlignment.Center
     
     ImageView {

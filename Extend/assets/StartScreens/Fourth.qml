@@ -72,13 +72,14 @@ Container {
 
     minWidth: app.deviceInfo.width
     maxWidth: minWidth
-    
+
+    verticalAlignment: VerticalAlignment.Center
+
     ImageView {
         imageSource: fourth.imageSource
-        scalingMethod: ScalingMethod.None
-        minHeight: app.deviceInfo.height
-        maxHeight: minHeight
+        scalingMethod: ScalingMethod.AspectFit
+        minWidth: app.deviceInfo.width * 0.75
+        maxWidth: minWidth
         horizontalAlignment: HorizontalAlignment.Center
-        verticalAlignment: VerticalAlignment.Center
     }
 }

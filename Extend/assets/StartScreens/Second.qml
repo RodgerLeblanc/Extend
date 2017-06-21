@@ -73,14 +73,15 @@ Container {
 
     minWidth: app.deviceInfo.width
     maxWidth: minWidth
+
+    verticalAlignment: VerticalAlignment.Center
     
     ImageView {
         id: image
         imageSource: "asset:///images/AwesomePicPositioned.png"
-        scalingMethod: ScalingMethod.None
-        minHeight: app.deviceInfo.height
-        maxHeight: minHeight
+        scalingMethod: ScalingMethod.AspectFit
+        minWidth: app.deviceInfo.width * 0.75
+        maxWidth: minWidth
         horizontalAlignment: HorizontalAlignment.Center
-        verticalAlignment: VerticalAlignment.Center
     }
 }
