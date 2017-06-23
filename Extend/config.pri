@@ -50,7 +50,6 @@ config_pri_assets {
         $$quote($$BASEDIR/assets/images/AwesomePicPositioned.png) \
         $$quote($$BASEDIR/assets/images/AwesomePicRenamedPositioned.png) \
         $$quote($$BASEDIR/assets/images/Background.png) \
-        $$quote($$BASEDIR/assets/images/BugIcon.png) \
         $$quote($$BASEDIR/assets/images/ExtendLogo_1440.png) \
         $$quote($$BASEDIR/assets/images/PassportAllBlurExceptAwesomePicRenamedTransparentBackground.png) \
         $$quote($$BASEDIR/assets/images/PassportAllBlurIncludingAwesomePicRenamedTransparentBackground.png) \

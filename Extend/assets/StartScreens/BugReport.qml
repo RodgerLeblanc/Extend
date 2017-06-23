@@ -47,7 +47,7 @@ Container {
         gestureHandlers: [ TapHandler { onTapped: { app.sendToHl("SEND_BUG_REPORT") } } ]
         
         ImageView {
-            imageSource: "asset:///images/BugIcon.png"
+            imageSource: "asset:///images/ExtendLogo_1440.png"
             scalingMethod: ScalingMethod.AspectFit
             minWidth: ui.du(10)
             maxWidth: minWidth
@@ -60,7 +60,7 @@ Container {
             horizontalAlignment: HorizontalAlignment.Center
             textStyle.fontSize: FontSize.Medium
             textStyle.textAlign: TextAlign.Center
-            textStyle.color: Color.create("#00FF00")
+            textStyle.color: Color.create("#FF006E")
             multiline: true
         }
     }
