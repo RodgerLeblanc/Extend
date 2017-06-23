@@ -13,6 +13,7 @@
 #define STRING(x) Logger::convertToString(x)
 
 #include <src/Logger/HeapUsage/HeapUsage.h>
+#include <src/common.hpp>
 
 #include <bb/data/JsonDataAccess>
 #include <QObject>
@@ -22,7 +23,6 @@
 #include <QMutex>
 #include <QMutexLocker>
 
-#define LOG_FILE "data/log.txt"
 #define MAXIMUM_LOG_SIZE 100
 
 class Logger : public QObject

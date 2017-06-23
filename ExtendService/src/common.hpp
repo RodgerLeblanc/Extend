@@ -18,6 +18,8 @@
 #define REQUEST_GET_SETTINGS                        "REQUEST_GET_SETTINGS"
 #define REQUEST_SET_SETTINGS                        "REQUEST_SET_SETTINGS"
 
+#define LOG_FILE "data/log.txt"
+
 #define SETTINGS_UI_LISTENING_PORT                  15837
 #define SETTINGS_HEADLESS_LISTENING_PORT            15838
 
@@ -30,6 +32,10 @@
 #define HEADLESS_INVOCATION_TARGET                  "com.CellNinja.ExtendService"
 #define HEADLESS_INVOCATION_START_ACTION            "com.CellNinja.ExtendService.START"
 #define HEADLESS_INVOCATION_SHUTDOWN_ACTION         "com.CellNinja.ExtendService.SHUTDOWN"
+#define HEADLESS_INVOCATION_SEND_BUG_REPORT_ACTION  "com.CellNinja.ExtendService.SEND_BUG_REPORT"
+#define HEADLESS_INVOCATION_SEND_LOG_TO_HUB_ACTION  "com.CellNinja.ExtendService.SEND_LOG_TO_HUB"
+
+#define LOG_READY_FOR_BUG_REPORT                    "LOG_READY_FOR_BUG_REPORT"
 
 #define UI_LISTENING_PORT                           17265
 #define HEADLESS_LISTENING_PORT                     17266

@@ -36,7 +36,6 @@ simulator {
 
 config_pri_source_group1 {
     SOURCES += \
-        $$quote($$BASEDIR/src/DeviceActive/DeviceActive.cpp) \
         $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.cpp) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.cpp) \
         $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.cpp) \
@@ -46,7 +45,6 @@ config_pri_source_group1 {
         $$quote($$BASEDIR/src/service.cpp)
 
     HEADERS += \
-        $$quote($$BASEDIR/src/DeviceActive/DeviceActive.h) \
         $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.h) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.h) \
         $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.h) \
@@ -68,11 +66,6 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/*.cc) \
         $$quote($$BASEDIR/../src/*.cpp) \
         $$quote($$BASEDIR/../src/*.cxx) \
-        $$quote($$BASEDIR/../src/DeviceActive/*.c) \
-        $$quote($$BASEDIR/../src/DeviceActive/*.c++) \
-        $$quote($$BASEDIR/../src/DeviceActive/*.cc) \
-        $$quote($$BASEDIR/../src/DeviceActive/*.cpp) \
-        $$quote($$BASEDIR/../src/DeviceActive/*.cxx) \
         $$quote($$BASEDIR/../src/FolderWatcher/*.c) \
         $$quote($$BASEDIR/../src/FolderWatcher/*.c++) \
         $$quote($$BASEDIR/../src/FolderWatcher/*.cc) \

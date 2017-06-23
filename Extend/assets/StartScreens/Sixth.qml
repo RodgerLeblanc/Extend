@@ -26,6 +26,7 @@ Container {
             toY: 0
             delay: mainPage.generalAnimationDelay * 2
             duration: mainPage.generalAnimationDuration * 2
+            onEnded: { animationEnded() }
         }
     ]
     

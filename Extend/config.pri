@@ -38,6 +38,7 @@ config_pri_assets {
     OTHER_FILES += \
         $$quote($$BASEDIR/assets/AppCover.qml) \
         $$quote($$BASEDIR/assets/StartScreens/Background.qml) \
+        $$quote($$BASEDIR/assets/StartScreens/BugReport.qml) \
         $$quote($$BASEDIR/assets/StartScreens/Fifth.qml) \
         $$quote($$BASEDIR/assets/StartScreens/First.qml) \
         $$quote($$BASEDIR/assets/StartScreens/Fourth.qml) \
@@ -49,6 +50,7 @@ config_pri_assets {
         $$quote($$BASEDIR/assets/images/AwesomePicPositioned.png) \
         $$quote($$BASEDIR/assets/images/AwesomePicRenamedPositioned.png) \
         $$quote($$BASEDIR/assets/images/Background.png) \
+        $$quote($$BASEDIR/assets/images/BugIcon.png) \
         $$quote($$BASEDIR/assets/images/ExtendLogo_1440.png) \
         $$quote($$BASEDIR/assets/images/PassportAllBlurExceptAwesomePicRenamedTransparentBackground.png) \
         $$quote($$BASEDIR/assets/images/PassportAllBlurIncludingAwesomePicRenamedTransparentBackground.png) \
@@ -59,6 +61,7 @@ config_pri_assets {
 config_pri_source_group1 {
     SOURCES += \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.cpp) \
+        $$quote($$BASEDIR/src/Logger/Logger.cpp) \
         $$quote($$BASEDIR/src/applicationui.cpp) \
         $$quote($$BASEDIR/src/main.cpp)
 

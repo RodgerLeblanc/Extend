@@ -17,13 +17,26 @@
 #include "applicationui.hpp"
 #include "common.hpp"
 
+#include <src/Logger/Logger.h>
+
 #include <bb/cascades/Application>
 #include <bb/cascades/QmlDocument>
 #include <bb/cascades/AbstractPane>
 #include <bb/cascades/LocaleHandler>
 #include <bb/system/InvokeManager>
 
+#include <bb/PpsObject>
+#include <QMutex>
+#include <QMutexLocker>
+#include <bb/data/JsonDataAccess>
+
+#include <bb/PackageInfo>
+#include <bb/device/HardwareInfo>
+#include <bb/platform/PlatformInfo>
+
 using namespace bb::cascades;
+using namespace bb::device;
+using namespace bb::platform;
 using namespace bb::system;
 
 ApplicationUI::ApplicationUI() :
@@ -56,7 +69,11 @@ ApplicationUI::ApplicationUI() :
 }
 
 void ApplicationUI::onReceivedData(QString data) {
-    qDebug() << "ApplicationUI::onReceivedData():" << data;
+    LOG("ApplicationUI::onReceivedData():", data);
+
+    if (data == LOG_READY_FOR_BUG_REPORT) {
+        this->sendBugReport();
+    }
 }
 
 void ApplicationUI::onSystemLanguageChanged()
@@ -70,12 +87,57 @@ void ApplicationUI::onSystemLanguageChanged()
     }
 }
 
-void ApplicationUI::sendToHl(QString message) {
-    headlessCommunication->sendMessage(message);
+void ApplicationUI::sendBugReport() {
+    HardwareInfo hardwareInfo;
+    PlatformInfo platformInfo;
+
+    InvokeRequest request;
+    request.setTarget("sys.pim.uib.email.hybridcomposer");
+    request.setAction("bb.action.COMPOSE");
+    request.setMimeType("message/rfc822");
+    QVariantMap data;
+    data["to"] = "support@cellninja.ca";
+    data["subject"] = "Bug Report for " + bb::Application::applicationName() + " " + bb::Application::applicationVersion() + " (" + hardwareInfo.modelName() + " " + platformInfo.osVersion() + ")";
+    data["body"] = "Hi CellNinja, I've found this bug in the app:\n\n\nHere's the steps to reproduce:\n\n";
+
+    QString logPath = QDir::currentPath() + "/sharewith/pim/log.txt";
+
+    QMutex mutex;
+    QMutexLocker locker(&mutex);
+
+    bb::data::JsonDataAccess jda;
+    QStringList log = jda.load(LOG_FILE).toMap()["log"].toStringList();
+
+    locker.unlock();
+
+    QVariantMap logMap;
+    logMap.insert("applicationVersion", bb::Application::instance()->applicationVersion());
+    logMap.insert("Time", QDateTime::currentDateTime());
+    logMap.insert("log", log);
+    jda.save(logMap, logPath);
+
+    data["attachment"] = logPath;
+    QVariantMap moreData;
+    moreData.insert("data", data);
+
+    bool ok;
+    request.setData(bb::PpsObject::encode(moreData, &ok));
+
+    if (!ok) {
+        LOG("PpsObject wasn't able to encode data");
+    }
+
+    invokeManager->invoke(request);
 }
 
-void ApplicationUI::shutdown()
-{
+void ApplicationUI::sendToHl(QString message) {
+    InvokeRequest request;
+    request.setTarget(HEADLESS_INVOCATION_TARGET);
+    request.setAction(QString(HEADLESS_INVOCATION_TARGET) + "." + message);
+    invokeManager->invoke(request);
+}
+
+void ApplicationUI::shutdown() {
     InvokeRequest request;
     request.setTarget(HEADLESS_INVOCATION_TARGET);
     request.setAction(HEADLESS_INVOCATION_SHUTDOWN_ACTION);

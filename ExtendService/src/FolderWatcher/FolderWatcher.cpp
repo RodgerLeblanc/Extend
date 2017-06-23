@@ -15,6 +15,7 @@
 #include <QStringList>
 #include <QDir>
 #include <QDateTime>
+#include <pthread.h>
 
 using namespace bb::device;
 
@@ -25,12 +26,17 @@ FolderWatcher::FolderWatcher(QObject *_parent) :
 {
     connect(fileSystemWatcher, SIGNAL(directoryChanged(const QString&)), this, SLOT(onDirectoryChanged(const QString&)));
     connect(sdCardInfo, SIGNAL(stateChanged(bb::device::SdCardState::Type)), this, SLOT(onSdCardStateChanged(bb::device::SdCardState::Type)));
-
-    this->addFoldersAndSubfolders(this->getDefaultDeviceFolders());
-    this->addFoldersAndSubfolders(this->getDefaultSdFolders());
 }
 
 FolderWatcher::~FolderWatcher() {}
+
+void FolderWatcher::init() {
+    QDateTime now = QDateTime::currentDateTime();
+    LOG("FolderWatcher::init() started on thread", pthread_self());
+    this->addFoldersAndSubfolders(this->getDefaultDeviceFolders());
+    this->addFoldersAndSubfolders(this->getDefaultSdFolders());
+    LOG("FolderWatcher::init() done in", now.secsTo(QDateTime::currentDateTime()), "seconds.");
+}
 
 bool FolderWatcher::isWatchingDefaultFolders(QStringList defaultFoldersList) {
     QStringList folders = this->getFolders();
@@ -44,10 +50,6 @@ void FolderWatcher::onSdCardStateChanged(SdCardState::Type sdCardState) {
     LOG("FolderWatcher::onSdCardStateChanged():", STRING(sdCardState));
 
     if (sdCardState != SdCardState::Mounted) {
-        return;
-    }
-
-    if (this->alreadyWatching(this->getDefaultSdFolders())) {
         return;
     }
 
@@ -78,14 +80,16 @@ void FolderWatcher::onDirectoryChanged(const QString& folderPath) {
         return;
     }
 
-    if (ImageFileSignatureChecker::isAnImage(newFilePath)) {
+    bool isAnImage = ImageFileSignatureChecker::isAnImage(newFilePath);
+    LOG(newFilePath, "isAnImage?", isAnImage);
+    if (isAnImage) {
         emit imageWithoutExtensionFound(newFilePath);
     }
 }
 
-QFileInfo FolderWatcher::getLastEntry(QString folderPath, QFileInfo defaultFileInfo) {
+QFileInfo& FolderWatcher::getLastEntry(QString folderPath, QFileInfo& defaultFileInfo) {
     QDir dir(folderPath);
-    QDir::Filters filters = QDir::Files;
+    QDir::Filters filters = QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::NoSymLinks;
     QDir::SortFlags flags = QDir::Time;
     QFileInfoList fileInfoList = dir.entryInfoList(filters, flags);
 
@@ -199,11 +203,5 @@ void FolderWatcher::cleanFolder(QString folderPath) {
                 emit imageWithoutExtensionFound(newFilePath);
             }
         }
-    }
-}
-
-void FolderWatcher::cleanWatchedFolders() {
-    foreach(QString folder, this->getFolders()) {
-        this->cleanFolder(folder);
     }
 }

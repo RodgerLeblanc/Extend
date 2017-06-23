@@ -103,6 +103,13 @@ Page {
         
         Sixth {
             id: sixth
+            onAnimationEnded: {
+                bugReport.startAnimation()
+            }
+        }
+        
+        BugReport {
+            id: bugReport
         }
     }
 }

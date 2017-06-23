@@ -46,6 +46,7 @@ public:
     ApplicationUI();
     virtual ~ApplicationUI() { }
 
+    Q_INVOKABLE void sendBugReport();
     Q_INVOKABLE void sendToHl(QString message);
     Q_INVOKABLE void shutdown();
 

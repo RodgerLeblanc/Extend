@@ -24,26 +24,25 @@
 #include <bb/platform/NotificationDefaultApplicationSettings>
 #include <bb/system/InvokeManager>
 #include <bb/system/SystemUiButton>
+#include <pthread.h>
 
 using namespace bb::platform;
 using namespace bb::system;
 
 Service::Service() :
         QObject(),
-        deviceActive(NULL),
-        folderWatcher(new FolderWatcher(this)),
         headlessCommunication(new HeadlessCommunication(this)),
         invokeManager(new InvokeManager(this)),
         notification(new Notification(this))
 {
+    LOG("Headless started on thread", pthread_self());
+
     Notification::deleteAllFromInbox();
 
     invokeManager->connect(invokeManager, SIGNAL(invoked(const bb::system::InvokeRequest&)),
                 this, SLOT(onInvoked(const bb::system::InvokeRequest&)));
 
-//    connect(deviceActive, SIGNAL(deviceActiveChanged(const bool&)), this, SLOT(onDeviceActiveChanged(const bool&)));
     connect(headlessCommunication, SIGNAL(receivedData(QString)), this, SLOT(onReceivedData(QString)));
-    connect(folderWatcher, SIGNAL(imageWithoutExtensionFound(const QString&)), this, SLOT(onImageWithoutExtensionFound(const QString&)));
 
     NotificationDefaultApplicationSettings settings;
     settings.setPreview(NotificationPriorityPolicy::Allow);
@@ -61,12 +60,21 @@ Service::Service() :
         connect(reply2, SIGNAL(finished()), reply2, SLOT(deleteLater()));
     }
 
-    QMetaObject::invokeMethod(folderWatcher, "cleanWatchedFolders", Qt::QueuedConnection);
+    folderWatcher = new FolderWatcher();
+    folderWatcher->moveToThread(&workerThread);
+    connect(&workerThread, SIGNAL(finished()), folderWatcher, SLOT(deleteLater()));
+    connect(folderWatcher, SIGNAL(imageWithoutExtensionFound(const QString&)), this, SLOT(onImageWithoutExtensionFound(const QString&)));
+    workerThread.start();
+
+    QMetaObject::invokeMethod(folderWatcher, "init", Qt::QueuedConnection);
 }
 
 Service::~Service() {
     LOG("~Service()");
     Logger::save();
+
+    workerThread.quit();
+    workerThread.wait();
 }
 
 void Service::onDeviceActiveChanged(const bool& deviceActive) {
@@ -83,16 +91,19 @@ void Service::onInvoked(const bb::system::InvokeRequest & request) {
     if (request.action() == HEADLESS_INVOCATION_SHUTDOWN_ACTION) {
         bb::Application::instance()->quit();
     }
-}
-
-void Service::onReceivedData(QString data) {
-    LOG("Service::onReceivedData():", data);
-
-    if (data == "LOG_TO_HUB") {
+    else if (request.action() == HEADLESS_INVOCATION_SEND_BUG_REPORT_ACTION) {
+        Logger::save();
+        headlessCommunication->sendMessage(LOG_READY_FOR_BUG_REPORT);
+    }
+    else if (request.action() == HEADLESS_INVOCATION_SEND_LOG_TO_HUB_ACTION) {
         QString title = bb::Application::applicationName();
         QString body = STRING(Logger::getLog());
         this->notify(title, body);
     }
+}
+
+void Service::onReceivedData(QString data) {
+    LOG("Service::onReceivedData():", data);
 }
 
 void Service::onImageWithoutExtensionFound(const QString& filePath) {

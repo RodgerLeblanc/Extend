@@ -29,7 +29,7 @@ public:
     QStringList getFolders();
 
 public slots:
-    void cleanWatchedFolders();
+    void init();
 
 private slots:
     void onDirectoryChanged(const QString&);
@@ -40,7 +40,7 @@ private:
     void cleanFolder(QString folderPath);
     QStringList getDefaultDeviceFolders();
     QStringList getDefaultSdFolders();
-    QFileInfo getLastEntry(QString folderPath, QFileInfo defaultFileInfo);
+    QFileInfo& getLastEntry(QString folderPath, QFileInfo& defaultFileInfo);
     bool isFileWithoutExtension(QString filePath);
     bool isWatchingDefaultFolders(QStringList defaultFoldersList);
     void saveFolders();

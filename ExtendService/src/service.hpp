@@ -21,7 +21,6 @@
 #include <QTimer>
 #include <bb/platform/Notification>
 
-#include <src/DeviceActive/DeviceActive.h>
 #include <src/HeadlessCommunication/HeadlessCommunication.h>
 #include <src/ImageFileSignatureChecker/ImageFileSignatureChecker.h>
 #include <src/FolderWatcher/FolderWatcher.h>
@@ -60,11 +59,12 @@ private:
     QString setExtensionToFilePath(QString filePath);
     bb::platform::Notification* setNotification(bb::platform::Notification* notif, QString title, QString body, QString iconUrl);
 
-    DeviceActive* deviceActive;
     FolderWatcher* folderWatcher;
     HeadlessCommunication* headlessCommunication;
     bb::system::InvokeManager* invokeManager;
     bb::platform::Notification* notification;
+
+    QThread workerThread;
 };
 
 #endif /* SERVICE_H_ */
