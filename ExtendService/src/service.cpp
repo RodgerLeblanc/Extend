@@ -37,8 +37,6 @@ Service::Service() :
 {
     LOG("Headless started on thread", pthread_self());
 
-    Notification::deleteAllFromInbox();
-
     invokeManager->connect(invokeManager, SIGNAL(invoked(const bb::system::InvokeRequest&)),
                 this, SLOT(onInvoked(const bb::system::InvokeRequest&)));
 

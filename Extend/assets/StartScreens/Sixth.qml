@@ -35,7 +35,7 @@ Container {
     translationY: app.deviceInfo.height
         
     Label {
-        text: qsTr("This app runs in the background, you don't need to keep it open as an active frame. There are no settings whatsoever, you just keep it installed and it will automatically rename any picture that is saved without an extension.")
+        text: qsTr("This app runs in the background, you don't need to keep it open as an active frame. There are no settings whatsoever, you just keep it installed and it will automatically rename any picture saved without an extension.")
         horizontalAlignment: HorizontalAlignment.Center
         textStyle.fontSize: FontSize.Medium
         textStyle.textAlign: TextAlign.Justify

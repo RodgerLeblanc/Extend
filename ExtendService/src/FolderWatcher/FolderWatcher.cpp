@@ -49,11 +49,24 @@ bool FolderWatcher::isWatchingDefaultFolders(QStringList defaultFoldersList) {
 void FolderWatcher::onSdCardStateChanged(SdCardState::Type sdCardState) {
     LOG("FolderWatcher::onSdCardStateChanged():", STRING(sdCardState));
 
-    if (sdCardState != SdCardState::Mounted) {
-        return;
+    switch (sdCardState) {
+        case SdCardState::Mounted: {
+            this->addFoldersAndSubfolders(this->getDefaultSdFolders());
+            break;
+        }
+        case SdCardState::Unmounted: {
+            QString sdRoot = QString(getenv("PERIMETER_HOME")) + "/removable/sdcard/";
+            QStringList sdFolders = this->getFolders();
+            sdFolders.filter(sdRoot, Qt::CaseInsensitive);
+            this->removeFolders(sdFolders);
+            break;
+        }
+        case SdCardState::Busy:
+        case SdCardState::Unknown:
+        default: {
+            break;
+        }
     }
-
-    this->addFoldersAndSubfolders(this->getDefaultSdFolders());
 }
 
 bool FolderWatcher::alreadyWatching(QStringList defaultFolders) {
