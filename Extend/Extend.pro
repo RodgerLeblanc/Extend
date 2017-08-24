@@ -9,6 +9,5 @@ CONFIG(release, debug|release) {
 
 include(config.pri)
 INCLUDEPATH += ../../$${HEADLESS_SERVICE}/src
-INCLUDEPATH += ../../$${HEADLESS_SERVICE}/src/Logger
 
 LIBS += -lbb -lbbdata -lbbdevice -lbbplatform -lbbsystem

@@ -1,0 +1,6 @@
+{
+	"1.0.1.0" : "2017/08/20
+
+- Extend will skip folders containing .nomedia file. (Thanks to Mauser for suggestion)
+- Added Changelog tool.
+"}

@@ -17,8 +17,12 @@
 #ifndef ApplicationUI_HPP_
 #define ApplicationUI_HPP_
 
-#include <QObject>
+#include "common.hpp"
 #include <src/HeadlessCommunication/HeadlessCommunication.h>
+#include <src/Logger/Logger.h>
+#include <src/Settings/Settings.h>
+
+#include <QObject>
 
 namespace bb {
     namespace cascades {
@@ -46,27 +50,33 @@ public:
     ApplicationUI();
     virtual ~ApplicationUI() { }
 
+    Q_INVOKABLE void invokeHL(QString action);
     Q_INVOKABLE void sendBugReport();
     Q_INVOKABLE void sendToHl(QString message);
     Q_INVOKABLE void shutdown();
 
+public Q_SLOTS:
+    Q_INVOKABLE void checkForChangelog();
+
 private slots:
-    void onReceivedData(QString);
+    void init();
+    void onReceivedData(QString, QVariant);
     void onSystemLanguageChanged();
 
 private:
     QVariantMap deviceInfo() { return deviceInfoMap; }
 
-    QTranslator* translator;
-    bb::cascades::LocaleHandler* localeHandler;
-    bb::system::InvokeManager* invokeManager;
-
     HeadlessCommunication* headlessCommunication;
+    bb::system::InvokeManager* invokeManager;
+    bb::cascades::LocaleHandler* localeHandler;
+    Settings* settings;
+    QTranslator* translator;
 
     QVariantMap deviceInfoMap;
 
 signals:
     void deviceInfoChanged(const QVariantMap&);
+    void newChangelog(QString);
 };
 
 #endif /* ApplicationUI_HPP_ */

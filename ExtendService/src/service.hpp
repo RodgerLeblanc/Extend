@@ -17,13 +17,18 @@
 #ifndef SERVICE_H_
 #define SERVICE_H_
 
+#include "common.hpp"
+#include <src/HeadlessCommunication/HeadlessCommunication.h>
+#include <src/Logger/Logger.h>
+#include <src/Settings/Settings.h>
+
 #include <QObject>
 #include <QTimer>
 #include <bb/platform/Notification>
 
-#include <src/HeadlessCommunication/HeadlessCommunication.h>
 #include <src/ImageFileSignatureChecker/ImageFileSignatureChecker.h>
-#include <src/FolderWatcher/FolderWatcher.h>
+#include <src/FolderCleaner/FolderCleaner.h>
+#include <src/MediaWatcher/MediaWatcher.h>
 
 namespace bb {
     class Application;
@@ -45,25 +50,33 @@ public:
     virtual ~Service();
 
 private slots:
+    void init();
     void onInvoked(const bb::system::InvokeRequest &);
     void onDeviceActiveChanged(const bool&);
+    void onFolderCleanerInitDone();
     void onImageFileSignatureCheckerError(QString, ImageFileSignatureCheckerError, QString);
     void onImageWithoutExtensionFound(const QString&);
-    void onReceivedData(QString);
+    void onReceivedData(QString, QVariant);
 
 private:
+    QString getCleanFilePath(QString path);
     int getImageRenamedCount();
-    QString getImageRenamedCountMessage();
+    QString getImageRenamedCountMessage(QString iconUrl);
     void notify(QString title, QString body, QString iconUrl = "");
     void notifyTemporarily(QString title, QString body, QString iconUrl = "");
     QString setExtensionToFilePath(QString filePath);
     bb::platform::Notification* setNotification(bb::platform::Notification* notif, QString title, QString body, QString iconUrl);
 
-    FolderWatcher* folderWatcher;
+    FolderCleaner* folderCleaner;
     HeadlessCommunication* headlessCommunication;
+    ImageFileSignatureChecker* imageFileSignatureChecker;
     bb::system::InvokeManager* invokeManager;
+    MediaWatcher* mediaWatcher;
     bb::platform::Notification* notification;
+    Settings* settings;
 
+    QString folderCleanerHubMessage;
+    bool fullyLoaded;
     QThread workerThread;
 };
 

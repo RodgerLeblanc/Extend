@@ -14,19 +14,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QImage>
-
-typedef enum ImageFileExtensionType {
-    UNKNOWN = -1,
-    BMP = 0,
-    ICO = 1,
-    JPG = 2,
-    GIF = 3,
-    PNG = 4,
-    TIFF = 5,
-
-    FIRST_EXTENSION = BMP,
-    LAST_EXTENSION = TIFF
-} ImageFileExtensionType;
+#include <QVariantMap>
 
 typedef enum ImageFileSignatureCheckerError {
     NoError = QFile::NoError,
@@ -51,22 +39,23 @@ class ImageFileSignatureChecker : public QObject
     Q_OBJECT
 
 public:
-    ImageFileSignatureChecker(QString filePath, QObject* parent = NULL);
+    ImageFileSignatureChecker(QObject* parent = NULL);
 
     static bool isAnImage(QString filePath);
+    static bool isFileWithoutExtension(QString filePath);
+    static bool isNoMediaFolder(QString folderPath);
 
-    ImageFileExtensionType getImageFileType();
-    QString setImageExtension(ImageFileExtensionType imageFileType);
+    QString setImageExtension(QString filePath);
 
 private:
-    QString getImageFileTypeName(ImageFileExtensionType imageFileType);
-    ImageFileExtensionType getImageFileTypeByName(QString name);
-    QByteArray getFileSignature();
+    QString getImageFileExtension(QString filePath);
+    QVariantMap getSignaturesMap();
+    QByteArray getFileSignature(QString filePath);
     static bool isAnImageNotHandledByQImage(QString filePath);
     bool renameFile(QString filePath, QString newFilePath);
     bool signaturesMatch(QString sig1, QString sig2);
 
-    QString filePath;
+    QVariantMap imageFileTypeSignaturesMap;
 
 signals:
     void error(QString filePath, ImageFileSignatureCheckerError error, QString errorMessage);

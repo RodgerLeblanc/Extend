@@ -12,8 +12,11 @@
 #define LOG_VAR(x) Logger::log(QString(QString(#x) + ": " + Logger::convertToString(x)))
 #define STRING(x) Logger::convertToString(x)
 
+#include "common.hpp"
+#include "helpers.hpp"
+
+#include <src/HeadlessCommunication/HeadlessCommunication.h>
 #include <src/Logger/HeapUsage/HeapUsage.h>
-#include <src/common.hpp>
 
 #include <bb/data/JsonDataAccess>
 #include <QObject>
@@ -30,6 +33,8 @@ class Logger : public QObject
     Q_OBJECT
 
 public:
+    static Logger* init(HeadlessCommunication* headlessCommunication, QObject* parent = NULL);
+
     static Logger* instance(QObject* parent = NULL) {
         static Logger* instance;
 
@@ -49,13 +54,18 @@ public:
         Logger::instance()->output = "";
     }
 
+//#if __cplusplus > 199711L
     template<typename T, typename... Args>
     static void log(T t, Args... args) {
         Logger::addToOutput(t);
         log(args...);
     }
+//#endif
 
     static QString convertToString(QVariant variant);
+
+private slots:
+    void onReceivedData(QString reason, QVariant data);
 
 private:
     template<typename T>
@@ -66,9 +76,17 @@ private:
 
     static void logFinal(QString message);
 
-    QString output;
-    QVariantMap logMap;
+    void setCommunication();
+    void setEnvironment(Environment::Type environmentType);
+    void sync();
+
+    HeadlessCommunication* loggerCommunication;
+
+    Environment::Type environment;
+    bool isInUiThread;
     QDateTime lastSaveDateTime;
+    QVariantMap logMap;
+    QString output;
 
 protected:
     Logger(QObject* parent);

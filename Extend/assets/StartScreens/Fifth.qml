@@ -59,7 +59,7 @@ Container {
         textStyle.color: Color.White
     }
     Label {
-        text: qsTr("Automatically rename pictures without extension")
+        text: qsTr("Automatically rename files without extension")
         horizontalAlignment: HorizontalAlignment.Center
         textStyle.fontSize: app.deviceInfo.width > 768 ? FontSize.Medium : FontSize.Small
         textStyle.textAlign: TextAlign.Center

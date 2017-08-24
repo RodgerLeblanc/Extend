@@ -24,47 +24,81 @@
 #include <bb/platform/NotificationDefaultApplicationSettings>
 #include <bb/system/InvokeManager>
 #include <bb/system/SystemUiButton>
-#include <pthread.h>
 
 using namespace bb::platform;
 using namespace bb::system;
 
 Service::Service() :
         QObject(),
-        headlessCommunication(new HeadlessCommunication(this)),
-        invokeManager(new InvokeManager(this)),
-        notification(new Notification(this))
+        folderCleaner(NULL),
+        headlessCommunication(NULL),
+        imageFileSignatureChecker(NULL),
+        invokeManager(NULL),
+        mediaWatcher(NULL),
+        notification(NULL),
+        settings(NULL),
+        fullyLoaded(false)
 {
-    LOG("Headless started on thread", pthread_self());
+    headlessCommunication = new HeadlessCommunication(Environment::Headless, this);
 
-    invokeManager->connect(invokeManager, SIGNAL(invoked(const bb::system::InvokeRequest&)),
-                this, SLOT(onInvoked(const bb::system::InvokeRequest&)));
+    Logger::init(headlessCommunication, this);
 
-    connect(headlessCommunication, SIGNAL(receivedData(QString)), this, SLOT(onReceivedData(QString)));
+    // Add this one line of code to all your projects, it will save you a ton of problems
+    // when dealing with foreign languages. No more ??? characters.
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
-    NotificationDefaultApplicationSettings settings;
-    settings.setPreview(NotificationPriorityPolicy::Allow);
-    settings.apply();
+    settings = Settings::instance(headlessCommunication, this);
 
-    // Next code will reopen Extend in case it gets terminated
-    InvokeReply* reply = invokeManager->deregisterTimer(REGISTER_TIMER_NAME);
-    connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+    QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
+}
 
-    InvokeRecurrenceRule recurrenceRule(bb::system::InvokeRecurrenceRuleFrequency::Minutely);
-    recurrenceRule.setInterval(6); // Minimum valid interval for Minutely frequency
-    if (recurrenceRule.isValid()) {
-        InvokeTimerRequest invokeTimerRequest(REGISTER_TIMER_NAME, recurrenceRule, HEADLESS_INVOCATION_TARGET);
-        InvokeReply* reply2 = invokeManager->registerTimer(invokeTimerRequest);
-        connect(reply2, SIGNAL(finished()), reply2, SLOT(deleteLater()));
+void Service::init() {
+    LOG("Headless started on thread", (int)QThread::currentThreadId());
+
+    imageFileSignatureChecker = new ImageFileSignatureChecker(this);
+    invokeManager = new InvokeManager(this);
+    mediaWatcher = new MediaWatcher(this);
+    notification = new Notification(this);
+
+    connect(invokeManager, SIGNAL(invoked(const bb::system::InvokeRequest&)), this, SLOT(onInvoked(const bb::system::InvokeRequest&)));
+    connect(headlessCommunication, SIGNAL(receivedData(QString, QVariant)), this, SLOT(onReceivedData(QString, QVariant)));
+    connect(mediaWatcher, SIGNAL(imageWithoutExtensionFound(const QString&)), this, SLOT(onImageWithoutExtensionFound(const QString&)));
+    connect(imageFileSignatureChecker,
+            SIGNAL(error(QString, ImageFileSignatureCheckerError, QString)),
+            this,
+            SLOT(onImageFileSignatureCheckerError(QString, ImageFileSignatureCheckerError, QString)));
+
+    NotificationDefaultApplicationSettings notificationDefaultApplicationSettings;
+    notificationDefaultApplicationSettings.setPreview(NotificationPriorityPolicy::Allow);
+    notificationDefaultApplicationSettings.apply();
+
+    if (SHOULD_ALWAYS_KEEP_HEADLESS_ALIVE) {
+        // Next code will reopen this app in case it gets terminated
+        QString registerTimerName = APP_NAME.remove(" ");
+        InvokeReply* reply = invokeManager->deregisterTimer(registerTimerName);
+        reply->deleteLater();
+
+        InvokeRecurrenceRule recurrenceRule(bb::system::InvokeRecurrenceRuleFrequency::Minutely);
+        recurrenceRule.setInterval(6); // Minimum valid interval for Minutely frequency
+        if (recurrenceRule.isValid()) {
+            InvokeTimerRequest invokeTimerRequest(registerTimerName, recurrenceRule, HEADLESS_INVOCATION_TARGET);
+            InvokeReply* reply = invokeManager->registerTimer(invokeTimerRequest);
+            connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
+        }
     }
 
-    folderWatcher = new FolderWatcher();
-    folderWatcher->moveToThread(&workerThread);
-    connect(&workerThread, SIGNAL(finished()), folderWatcher, SLOT(deleteLater()));
-    connect(folderWatcher, SIGNAL(imageWithoutExtensionFound(const QString&)), this, SLOT(onImageWithoutExtensionFound(const QString&)));
+    if (!settings->contains(SETTINGS_INSTALLED_DATE)) {
+        settings->setValue(SETTINGS_INSTALLED_DATE, QDateTime::currentDateTime());
+    }
+
+    folderCleaner = new FolderCleaner();
+    connect(folderCleaner, SIGNAL(imageWithoutExtensionFound(const QString&)), this, SLOT(onImageWithoutExtensionFound(const QString&)));
+    connect(folderCleaner, SIGNAL(initDone()), this, SLOT(onFolderCleanerInitDone()));
+    folderCleaner->moveToThread(&workerThread);
+    connect(&workerThread, SIGNAL(finished()), folderCleaner, SLOT(deleteLater()));
     workerThread.start();
 
-    QMetaObject::invokeMethod(folderWatcher, "init", Qt::QueuedConnection);
+    QMetaObject::invokeMethod(folderCleaner, "init", Qt::QueuedConnection);
 }
 
 Service::~Service() {
@@ -76,7 +110,20 @@ Service::~Service() {
 }
 
 void Service::onDeviceActiveChanged(const bool& deviceActive) {
-    LOG("Service::onDeviceActiveChanged():", STRING(deviceActive));
+    Q_UNUSED(deviceActive);
+}
+
+void Service::onFolderCleanerInitDone() {
+    fullyLoaded = true;
+
+    if (!folderCleanerHubMessage.isEmpty()) {
+        QString title = QCoreApplication::applicationName();
+        QString body = folderCleanerHubMessage;
+        QString iconPath = QString::fromUtf8("file://%1/app/native/ExtendLogo_144.png").arg(QDir::currentPath());
+        this->notify(title, body, iconPath);
+
+        folderCleanerHubMessage = "";
+    }
 }
 
 void Service::onInvoked(const bb::system::InvokeRequest & request) {
@@ -100,63 +147,80 @@ void Service::onInvoked(const bb::system::InvokeRequest & request) {
     }
 }
 
-void Service::onReceivedData(QString data) {
-    LOG("Service::onReceivedData():", data);
+void Service::onReceivedData(QString reason, QVariant data) {
+    Q_UNUSED(reason);
+    Q_UNUSED(data);
 }
 
 void Service::onImageWithoutExtensionFound(const QString& filePath) {
-    LOG("Service::onImageWithoutExtensionFound():", filePath);
-
     QString newFilePath = this->setExtensionToFilePath(filePath);
-    LOG_VAR(newFilePath);
 
     if (newFilePath == filePath) {
-        LOG("The file path didn't changed, return.");
         return;
     }
 
-    QString title = QCoreApplication::applicationName();
-    QString body = QString(tr("Renamed %1")).arg(newFilePath.split("/").last()) + "     ";
-    QString iconUrl = newFilePath;
-    this->notify(title, body, iconUrl);
+    LOG("Service::onImageWithoutExtensionFound():", filePath);
+    LOG_VAR(newFilePath);
+
+    if (fullyLoaded) {
+        QString title = QCoreApplication::applicationName();
+        QString body = QString(tr("Renamed %1")).arg(newFilePath.split("/").last()) + "     ";
+        QString iconUrl = newFilePath;
+        this->notify(title, body, iconUrl);
+    }
+    else {
+        QString body = QString(tr("Renamed %1")).arg(newFilePath.split("/").last()) + "\n";
+        folderCleanerHubMessage += body;
+    }
 }
 
 QString Service::setExtensionToFilePath(QString filePath) {
-    ImageFileSignatureChecker* imageFileSignatureChecker = new ImageFileSignatureChecker(filePath, this);
-    connect(imageFileSignatureChecker,
-            SIGNAL(error(QString, ImageFileSignatureCheckerError, QString)),
-            this,
-            SLOT(onImageFileSignatureCheckerError(QString, ImageFileSignatureCheckerError, QString)));
-
-    ImageFileExtensionType imageFileType = imageFileSignatureChecker->getImageFileType();
-    QString newFilePath = imageFileSignatureChecker->setImageExtension(imageFileType);
-    imageFileSignatureChecker->deleteLater();
+    QString newFilePath = imageFileSignatureChecker->setImageExtension(filePath);
     return newFilePath;
 }
 
 void Service::onImageFileSignatureCheckerError(QString filePath, ImageFileSignatureCheckerError error, QString errorMessage) {
-    LOG("Service::onImageFileSignatureCheckerError():", filePath, STRING(error), errorMessage);
+    if (fullyLoaded)
+        LOG("Service::onImageFileSignatureCheckerError():", filePath, STRING(error), errorMessage);
+
+    Q_UNUSED(filePath);
+    Q_UNUSED(error);
+    Q_UNUSED(errorMessage);
 }
 
 void Service::notify(QString title, QString body, QString iconUrl) {
     Notification* notif = this->setNotification(new Notification(this), title, body, iconUrl);
     notif->notify();
-    notif->clearEffects();
 }
 
 Notification* Service::setNotification(Notification* notif, QString title, QString body, QString iconUrl) {
+    QString message = this->getImageRenamedCountMessage(iconUrl);
+
     notif->setTitle(title);
-    notif->setBody(body + "\n\n" + this->getImageRenamedCountMessage());
-    notif->setIconUrl(QUrl(iconUrl));
+    notif->setBody(body + "\n\n" + message);
+
+    if (ImageFileSignatureChecker::isAnImage(iconUrl))
+        notif->setIconUrl(QUrl(iconUrl));
+    else
+        notif->setIconUrl(QUrl(QString::fromUtf8("file://%1/app/native/assets/images/ExtendLogo_1440.png").arg(QDir::currentPath())));
+
+    bb::system::InvokeRequest request;
+    request.setUri(QString("bbfiles://%1").arg(iconUrl));
+    notif->setInvokeRequest(request);
+
     return notif;
 }
 
-QString Service::getImageRenamedCountMessage() {
+QString Service::getImageRenamedCountMessage(QString iconUrl) {
     int count = this->getImageRenamedCount();
 
-    QString message = QString(tr("%1 successfully renamed %2 images until now. Great, isn't it?"))
+    QString message = QString(tr("%1 successfully renamed %2 files until now. Great, isn't it?"))
                                 .arg(QCoreApplication::applicationName())
                                 .arg(count);
+    message += "\n\n";
+    message += QString(tr("Click 'Open' in the bottom of this screen to open your file."));
+    message += "\n\n";
+    message += QString(tr("The file is located at :\n%1")).arg(this->getCleanFilePath(iconUrl));
     message += "\n\n";
     message += QString(tr("If you want to rate this app in BlackBerry World and tell the world how great it is, click on this link :"));
     message += "\n";
@@ -169,4 +233,14 @@ int Service::getImageRenamedCount() {
     int count = settings->value(SETTINGS_IMAGE_RENAMED_COUNT, 0).toInt();
     settings->setValue(SETTINGS_IMAGE_RENAMED_COUNT, ++count);
     return count;
+}
+
+QString Service::getCleanFilePath(QString path) {
+    path.remove("file://", Qt::CaseInsensitive);
+    path.remove("/accounts/1000/shared", Qt::CaseInsensitive);
+    path.remove("/accounts/1000/removable", Qt::CaseInsensitive);
+    path.remove("/accounts/1000-enterprise/shared", Qt::CaseInsensitive);
+    path.remove("/accounts/1000-enterprise/removable", Qt::CaseInsensitive);
+
+    return path;
 }

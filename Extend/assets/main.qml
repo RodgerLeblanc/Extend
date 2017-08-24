@@ -15,6 +15,7 @@
  */
 
 import bb.cascades 1.3
+import "Changelog"
 import "StartScreens"
 
 Page {
@@ -23,26 +24,35 @@ Page {
     property int generalAnimationDelay: 750
     property int generalAnimationDuration: 750
 
-    attachedObjects: [
-        RenderFence {
-            raised: true
-            onReached: {
-                background.startAnimation()
-            }
-        },
-        AppCover { id: activeFrame }
-    ]
+    onCreationCompleted: {
+        Application.menuEnabled = false
+        Application.setCover(activeFrame)
+        Application.fullscreen.connect(reset)
+        
+        app.newChangelog.connect(onNewChangelog)
+    }
     
     function reset() {
         mainContainer.translationY = 0
         background.startAnimation()
     }
     
-    onCreationCompleted: {
-        Application.menuEnabled = false
-        Application.setCover(activeFrame)
-        Application.fullscreen.connect(reset)
+    function onNewChangelog(newChangelogForThisUser) {
+        console.log("onNewChangelog: " + newChangelogForThisUser)
+        changelogButton.changelog = newChangelogForThisUser
     }
+    
+    attachedObjects: [
+        RenderFence {
+            raised: true
+            onReached: {
+                background.startAnimation()
+                app.checkForChangelog()
+            }
+        },
+        AppCover { id: activeFrame },
+        ComponentDefinition { id: changelogSheet; ChangelogSheet {} }
+    ]
     
     Container {
         id: mainContainer
@@ -105,11 +115,33 @@ Page {
             id: sixth
             onAnimationEnded: {
                 bugReport.startAnimation()
+                changelogButton.startAnimation()
             }
         }
         
         BugReport {
             id: bugReport
+        }
+        
+        ChangelogButton {
+            id: changelogButton
+            property string changelog
+            
+            onChangelogClicked: {
+                var createdControl = changelogSheet.createObject()
+                createdControl.changelogText = changelog
+                
+                //If you don't specify countdownSeconds, it will default to 10 
+                createdControl.countdownSeconds = 0
+                
+                //If you don't specify colors, it will default to white background with black border and text
+                createdControl.changelogOuterBackground = Color.Black
+                createdControl.changelogBorderColor = Color.White
+                createdControl.changelogInnerBackground = Color.Black
+                createdControl.changelogTextColor = Color.White
+                
+                createdControl.open()
+            }
         }
     }
 }

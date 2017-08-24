@@ -12,10 +12,10 @@
 #include <bb/data/JsonDataAccess>
 #include <QStringList>
 
-ImageFileSignatureChecker::ImageFileSignatureChecker(QString filePath, QObject* parent) :
-    QObject(parent),
-    filePath(filePath)
+ImageFileSignatureChecker::ImageFileSignatureChecker(QObject* parent) :
+    QObject(parent)
 {
+    imageFileTypeSignaturesMap = this->getSignaturesMap();
 }
 
 bool ImageFileSignatureChecker::isAnImage(QString filePath) {
@@ -37,26 +37,54 @@ bool ImageFileSignatureChecker::isAnImageNotHandledByQImage(QString filePath) {
     return sig.startsWith("FFD8FFED");
 }
 
-ImageFileExtensionType ImageFileSignatureChecker::getImageFileType() {
-    bb::data::JsonDataAccess jda;
+bool ImageFileSignatureChecker::isFileWithoutExtension(QString filePath) {
+    QString fileName = filePath.split("/").last();
+    return !fileName.contains(".");
+}
 
-    QByteArray thisSig = this->getFileSignature();
-    QVariantMap imageFileTypeSignaturesMap = jda.load(IMAGE_FILE_TYPE_SIGNATURE_FILE).toMap();
+bool ImageFileSignatureChecker::isNoMediaFolder(QString folderPath) {
+    QDir dir(folderPath);
+    QStringList nameFilters = QStringList() << "*.nomedia";
+    QDir::Filters filters = QDir::Hidden | QDir::AllEntries | QDir::NoDotAndDotDot;
+    QFileInfoList fileInfoList = dir.entryInfoList(nameFilters, filters);
+
+    return !fileInfoList.isEmpty();
+}
+
+QString ImageFileSignatureChecker::setImageExtension(QString filePath) {
+    QString extension = this->getImageFileExtension(filePath);
+    if (extension.isEmpty()) {
+        emit this->error(filePath, UnspecifiedError, "Can't find a matching extension");
+        return filePath;
+    }
+
+    QString newFilePath = filePath + "." + extension.toLower();
+    bool ok = renameFile(filePath, newFilePath);
+
+    return ok ? newFilePath : filePath;
+}
+
+QString ImageFileSignatureChecker::getImageFileExtension(QString filePath) {
+    QByteArray unknownSig = this->getFileSignature(filePath);
 
     foreach(QString key, imageFileTypeSignaturesMap.keys()) {
         QStringList sigsForThisExtension = imageFileTypeSignaturesMap[key].toStringList();
-        foreach(QString sig, sigsForThisExtension) {
-            if (signaturesMatch(thisSig, sig)) {
-                return this->getImageFileTypeByName(key);
+        foreach(QString knownSig, sigsForThisExtension) {
+            if (signaturesMatch(unknownSig, knownSig)) {
+                return key;
             }
         }
     }
 
-    LOG("Image file type can't be retrieved");
-    return UNKNOWN;
+    return QString();
 }
 
-QByteArray ImageFileSignatureChecker::getFileSignature() {
+QVariantMap ImageFileSignatureChecker::getSignaturesMap() {
+    bb::data::JsonDataAccess jda;
+    return jda.load(IMAGE_FILE_TYPE_SIGNATURE_FILE).toMap();
+}
+
+QByteArray ImageFileSignatureChecker::getFileSignature(QString filePath) {
     QByteArray sig;
     QFile file(filePath);
     if (file.open(QIODevice::ReadOnly))
@@ -69,55 +97,13 @@ QByteArray ImageFileSignatureChecker::getFileSignature() {
     return sig.toHex().toUpper();
 }
 
-bool ImageFileSignatureChecker::signaturesMatch(QString sig1, QString sig2) {
-    sig1.remove(" ");
-    sig2.remove(" ");
-    int maxSigSize = qMin(sig1.size(), sig2.size());
-    return sig1.left(maxSigSize) == sig2.left(maxSigSize);
-}
+bool ImageFileSignatureChecker::signaturesMatch(QString unknownSig, QString knownSig) {
+    unknownSig.remove(" ");
+    knownSig.remove(" ");
 
-ImageFileExtensionType ImageFileSignatureChecker::getImageFileTypeByName(QString name) {
-    for(int i = FIRST_EXTENSION; i <= LAST_EXTENSION; i++) {
-        ImageFileExtensionType thisType = (ImageFileExtensionType)i;
-        if (this->getImageFileTypeName(thisType) == name) {
-            return thisType;
-        }
-    }
-    LOG("Image file type can't be retrieved");
-    return UNKNOWN;
-}
+    unknownSig = unknownSig.left(knownSig.size());
 
-QString ImageFileSignatureChecker::getImageFileTypeName(ImageFileExtensionType imageFileType) {
-    switch (imageFileType) {
-        case UNKNOWN :
-            return "";
-        case BMP :
-            return "BMP";
-        case ICO :
-            return "ICO";
-        case JPG :
-            return "JPG";
-        case GIF :
-            return "GIF";
-        case PNG :
-            return "PNG";
-        case TIFF :
-            return "TIFF";
-    }
-    return "";
-}
-
-QString ImageFileSignatureChecker::setImageExtension(ImageFileExtensionType imageFileType) {
-    QString extension = this->getImageFileTypeName(imageFileType).toLower();
-    if (extension.isEmpty()) {
-        emit this->error(filePath, UnspecifiedError, "Can't find a matching extension");
-        return filePath;
-    }
-
-    QString newFilePath = filePath + "." + extension;
-    bool ok = renameFile(filePath, newFilePath);
-
-    return ok ? newFilePath : filePath;
+    return unknownSig.contains(QRegExp(knownSig, Qt::CaseInsensitive));
 }
 
 bool ImageFileSignatureChecker::renameFile(QString filePath, QString newFilePath) {

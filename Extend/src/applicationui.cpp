@@ -41,12 +41,33 @@ using namespace bb::system;
 
 ApplicationUI::ApplicationUI() :
         QObject(),
-        translator(new QTranslator(this)),
-        localeHandler(new LocaleHandler(this)),
-        invokeManager(new InvokeManager(this)),
-        headlessCommunication(new HeadlessCommunication(this))
+        headlessCommunication(NULL),
+        invokeManager(NULL),
+        localeHandler(NULL),
+        settings(NULL),
+        translator(NULL)
 {
-    connect(headlessCommunication, SIGNAL(receivedData(QString)), this, SLOT(onReceivedData(QString)));
+    this->invokeHL(HEADLESS_INVOCATION_START_ACTION);
+
+    headlessCommunication = new HeadlessCommunication(Environment::UI, this);
+
+    Logger::init(headlessCommunication, this);
+
+    // Add this one line of code to all your projects, it will save you a ton of problems
+    // when dealing with foreign languages. No more ??? characters.
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+
+    settings = Settings::instance(headlessCommunication, this);
+
+    init();
+}
+
+void ApplicationUI::init() {
+    invokeManager = new InvokeManager(this);
+    localeHandler = new LocaleHandler(this);
+    translator = new QTranslator(this);
+
+    connect(headlessCommunication, SIGNAL(receivedData(QString, QVariant)), this, SLOT(onReceivedData(QString, QVariant)));
     connect(localeHandler, SIGNAL(systemLanguageChanged()), this, SLOT(onSystemLanguageChanged()));
 
     InvokeRequest request;
@@ -62,16 +83,42 @@ ApplicationUI::ApplicationUI() :
     deviceInfoMap.insert("coverHeight", getenv("COVERHEIGHT"));
     emit this->deviceInfoChanged(deviceInfoMap);
 
+    // Registering QTimer for easy QML access. We add it to bb.cascades to avoid having to import
+    // a separate library for such a tiny addition. (Don't worry, it won't slow down your bb.cascades
+    // library loading)
+    qmlRegisterType<QTimer>("bb.cascades", 1, 0, "QTimer");
+
     QmlDocument *qml = QmlDocument::create("asset:///main.qml").parent(this);
     qml->setContextProperty("app", this);
     AbstractPane *root = qml->createRootObject<AbstractPane>();
     Application::instance()->setScene(root);
 }
 
-void ApplicationUI::onReceivedData(QString data) {
-    LOG("ApplicationUI::onReceivedData():", data);
+void ApplicationUI::checkForChangelog() {
+    QVariantMap changelogMap = Helpers::safeReadJsonFile(CHANGELOG_FILE).toMap();
+    QStringList lastVersionLoadedInSettings = settings->value(SETTINGS_LAST_VERSION_LOADED, "0.0.0.0").toString().split(".");
 
-    if (data == LOG_READY_FOR_BUG_REPORT) {
+    QString newChangelogForThisUser;
+
+    QStringList changelogVersions = changelogMap.keys();
+    foreach(QString changelog, changelogVersions) {
+        newChangelogForThisUser.prepend(changelog + "\n" + changelogMap[changelog].toString() + "\n\n");
+    }
+
+    emit newChangelog(newChangelogForThisUser);
+
+    settings->setValue(SETTINGS_LAST_VERSION_LOADED, APP_VERSION);
+}
+
+void ApplicationUI::invokeHL(QString action) {
+    InvokeRequest request;
+    request.setTarget(HEADLESS_INVOCATION_TARGET);
+    request.setAction(action);
+    invokeManager->invoke(request);
+}
+
+void ApplicationUI::onReceivedData(QString reason, QVariant data) {
+    if (reason == LOG_READY_FOR_BUG_REPORT) {
         this->sendBugReport();
     }
 }

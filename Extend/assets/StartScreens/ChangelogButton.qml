@@ -2,6 +2,7 @@ import bb.cascades 1.3
 
 Container {
     signal animationEnded()
+    signal changelogClicked()
     
     function startAnimation() {
         mainAnimation.play()
@@ -39,15 +40,15 @@ Container {
     opacity: 0
     
     Container {
-        horizontalAlignment: HorizontalAlignment.Right
+        horizontalAlignment: HorizontalAlignment.Left
         verticalAlignment: VerticalAlignment.Bottom
         bottomPadding: ui.du(3)
         rightPadding: bottomPadding
         
-        gestureHandlers: [ TapHandler { onTapped: { app.invokeHL("com.CellNinja.ExtendService.SEND_BUG_REPORT") } } ]
+        gestureHandlers: [ TapHandler { onTapped: { changelogClicked() } } ]
         
         ImageView {
-            imageSource: "asset:///images/ExtendLogo_1440.png"
+            imageSource: "asset:///images/info.png"
             scalingMethod: ScalingMethod.AspectFit
             minWidth: ui.du(10)
             maxWidth: minWidth
@@ -56,7 +57,7 @@ Container {
             horizontalAlignment: HorizontalAlignment.Center
         }
         Label {
-            text: qsTr("Report a bug")
+            text: qsTr("Changelog")
             horizontalAlignment: HorizontalAlignment.Center
             textStyle.fontSize: FontSize.Medium
             textStyle.textAlign: TextAlign.Center

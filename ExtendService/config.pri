@@ -36,22 +36,30 @@ simulator {
 
 config_pri_source_group1 {
     SOURCES += \
-        $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.cpp) \
+        $$quote($$BASEDIR/src/FolderCleaner/FolderCleaner.cpp) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.cpp) \
         $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.cpp) \
         $$quote($$BASEDIR/src/Logger/Logger.cpp) \
+        $$quote($$BASEDIR/src/MediaWatcher/MediaWatcher.cpp) \
+        $$quote($$BASEDIR/src/PpsWatch/PpsWatch.cpp) \
         $$quote($$BASEDIR/src/Settings/Settings.cpp) \
         $$quote($$BASEDIR/src/main.cpp) \
         $$quote($$BASEDIR/src/service.cpp)
 
     HEADERS += \
-        $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.h) \
+        $$quote($$BASEDIR/src/Enums/FilePerimeter.h) \
+        $$quote($$BASEDIR/src/Enums/FileType.h) \
+        $$quote($$BASEDIR/src/FolderCleaner/FolderCleaner.h) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.h) \
         $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.h) \
         $$quote($$BASEDIR/src/Logger/HeapUsage/HeapUsage.h) \
         $$quote($$BASEDIR/src/Logger/Logger.h) \
+        $$quote($$BASEDIR/src/MediaFile/MediaFile.h) \
+        $$quote($$BASEDIR/src/MediaWatcher/MediaWatcher.h) \
+        $$quote($$BASEDIR/src/PpsWatch/PpsWatch.h) \
         $$quote($$BASEDIR/src/Settings/Settings.h) \
         $$quote($$BASEDIR/src/common.hpp) \
+        $$quote($$BASEDIR/src/helpers.hpp) \
         $$quote($$BASEDIR/src/service.hpp)
 }
 
@@ -66,11 +74,16 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/*.cc) \
         $$quote($$BASEDIR/../src/*.cpp) \
         $$quote($$BASEDIR/../src/*.cxx) \
-        $$quote($$BASEDIR/../src/FolderWatcher/*.c) \
-        $$quote($$BASEDIR/../src/FolderWatcher/*.c++) \
-        $$quote($$BASEDIR/../src/FolderWatcher/*.cc) \
-        $$quote($$BASEDIR/../src/FolderWatcher/*.cpp) \
-        $$quote($$BASEDIR/../src/FolderWatcher/*.cxx) \
+        $$quote($$BASEDIR/../src/Enums/*.c) \
+        $$quote($$BASEDIR/../src/Enums/*.c++) \
+        $$quote($$BASEDIR/../src/Enums/*.cc) \
+        $$quote($$BASEDIR/../src/Enums/*.cpp) \
+        $$quote($$BASEDIR/../src/Enums/*.cxx) \
+        $$quote($$BASEDIR/../src/FolderCleaner/*.c) \
+        $$quote($$BASEDIR/../src/FolderCleaner/*.c++) \
+        $$quote($$BASEDIR/../src/FolderCleaner/*.cc) \
+        $$quote($$BASEDIR/../src/FolderCleaner/*.cpp) \
+        $$quote($$BASEDIR/../src/FolderCleaner/*.cxx) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.c) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.c++) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.cc) \
@@ -91,6 +104,21 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/Logger/HeapUsage/*.cc) \
         $$quote($$BASEDIR/../src/Logger/HeapUsage/*.cpp) \
         $$quote($$BASEDIR/../src/Logger/HeapUsage/*.cxx) \
+        $$quote($$BASEDIR/../src/MediaFile/*.c) \
+        $$quote($$BASEDIR/../src/MediaFile/*.c++) \
+        $$quote($$BASEDIR/../src/MediaFile/*.cc) \
+        $$quote($$BASEDIR/../src/MediaFile/*.cpp) \
+        $$quote($$BASEDIR/../src/MediaFile/*.cxx) \
+        $$quote($$BASEDIR/../src/MediaWatcher/*.c) \
+        $$quote($$BASEDIR/../src/MediaWatcher/*.c++) \
+        $$quote($$BASEDIR/../src/MediaWatcher/*.cc) \
+        $$quote($$BASEDIR/../src/MediaWatcher/*.cpp) \
+        $$quote($$BASEDIR/../src/MediaWatcher/*.cxx) \
+        $$quote($$BASEDIR/../src/PpsWatch/*.c) \
+        $$quote($$BASEDIR/../src/PpsWatch/*.c++) \
+        $$quote($$BASEDIR/../src/PpsWatch/*.cc) \
+        $$quote($$BASEDIR/../src/PpsWatch/*.cpp) \
+        $$quote($$BASEDIR/../src/PpsWatch/*.cxx) \
         $$quote($$BASEDIR/../src/Settings/*.c) \
         $$quote($$BASEDIR/../src/Settings/*.c++) \
         $$quote($$BASEDIR/../src/Settings/*.cc) \

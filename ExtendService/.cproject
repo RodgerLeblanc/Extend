@@ -12,7 +12,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildProperties="" id="com.qnx.qcc.toolChain.1545127197" name="Device-Debug" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactName="${ProjName}" buildProperties="" description="" id="com.qnx.qcc.toolChain.1545127197" name="Device-Debug" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="com.qnx.qcc.toolChain.1545127197.751471692" name="/" resourcePath="">
 						<toolChain id="com.qnx.qcc.toolChain.2102890985" name="com.qnx.qcc.toolChain" superClass="com.qnx.qcc.toolChain">
 							<option id="com.qnx.qcc.option.os.549524808" name="Target OS:" superClass="com.qnx.qcc.option.os"/>
@@ -20,9 +20,9 @@
 							<option id="com.qnx.qcc.option.compiler.1208896142" name="Compiler:" superClass="com.qnx.qcc.option.compiler"/>
 							<option id="com.qnx.qcc.option.runtime.1914423646" name="Runtime:" superClass="com.qnx.qcc.option.runtime"/>
 							<targetPlatform archList="all" binaryParser="com.qnx.tools.ide.qde.core.QDEBynaryParser" id="com.qnx.qcc.targetPlatform.1215380297" osList="all" superClass="com.qnx.qcc.targetPlatform"/>
-							<builder autoBuildTarget="Device-Debug" enableAutoBuild="true" id="com.qnx.qcc.toolChain.1545127197.1740495295" incrementalBuildTarget="Device-Debug" managedBuildOn="false" name="device-debug builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.device-debug"/>
+							<builder autoBuildTarget="Device-Debug" enableAutoBuild="true" id="com.qnx.qcc.toolChain.1545127197.1740495295" incrementalBuildTarget="Device-Debug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="device-debug builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.device-debug"/>
 							<tool id="com.qnx.qcc.tool.compiler.1278480845" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
-								<option id="com.qnx.qcc.option.compiler.optlevel.255512172" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
+								<option id="com.qnx.qcc.option.compiler.optlevel.255512172" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<inputType id="com.qnx.qcc.inputType.compiler.360321540" superClass="com.qnx.qcc.inputType.compiler"/>
 							</tool>
 							<tool id="com.qnx.qcc.tool.assembler.1089910230" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">
@@ -50,7 +50,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildProperties="" id="com.qnx.qcc.toolChain.1993275960" name="Device-Release" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactName="${ProjName}" buildProperties="" description="" id="com.qnx.qcc.toolChain.1993275960" name="Device-Release" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="com.qnx.qcc.toolChain.1993275960.1423819388" name="/" resourcePath="">
 						<toolChain id="com.qnx.qcc.toolChain.370161816" name="com.qnx.qcc.toolChain" superClass="com.qnx.qcc.toolChain">
 							<option id="com.qnx.qcc.option.os.235135894" name="Target OS:" superClass="com.qnx.qcc.option.os"/>
@@ -58,9 +58,9 @@
 							<option id="com.qnx.qcc.option.compiler.2138150888" name="Compiler:" superClass="com.qnx.qcc.option.compiler"/>
 							<option id="com.qnx.qcc.option.runtime.911648468" name="Runtime:" superClass="com.qnx.qcc.option.runtime"/>
 							<targetPlatform archList="all" binaryParser="com.qnx.tools.ide.qde.core.QDEBynaryParser" id="com.qnx.qcc.targetPlatform.2121084801" osList="all" superClass="com.qnx.qcc.targetPlatform"/>
-							<builder autoBuildTarget="Device-Release" enableAutoBuild="true" id="com.qnx.qcc.toolChain.1993275960.16698066" incrementalBuildTarget="Device-Release" managedBuildOn="false" name="device-release builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.device-release"/>
+							<builder autoBuildTarget="Device-Release" enableAutoBuild="true" id="com.qnx.qcc.toolChain.1993275960.16698066" incrementalBuildTarget="Device-Release" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="device-release builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.device-release"/>
 							<tool id="com.qnx.qcc.tool.compiler.27627158" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
-								<option id="com.qnx.qcc.option.compiler.optlevel.1216664677" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
+								<option id="com.qnx.qcc.option.compiler.optlevel.1216664677" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<inputType id="com.qnx.qcc.inputType.compiler.1656908985" superClass="com.qnx.qcc.inputType.compiler"/>
 							</tool>
 							<tool id="com.qnx.qcc.tool.assembler.1283959002" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">
@@ -88,7 +88,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildProperties="" id="com.qnx.qcc.toolChain.1964792373" name="Device-Profile" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactName="${ProjName}" buildProperties="" description="" id="com.qnx.qcc.toolChain.1964792373" name="Device-Profile" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="com.qnx.qcc.toolChain.1964792373.388519957" name="/" resourcePath="">
 						<toolChain id="com.qnx.qcc.toolChain.1751777172" name="com.qnx.qcc.toolChain" superClass="com.qnx.qcc.toolChain">
 							<option id="com.qnx.qcc.option.os.974437017" name="Target OS:" superClass="com.qnx.qcc.option.os"/>
@@ -96,9 +96,9 @@
 							<option id="com.qnx.qcc.option.compiler.253124120" name="Compiler:" superClass="com.qnx.qcc.option.compiler"/>
 							<option id="com.qnx.qcc.option.runtime.1533108498" name="Runtime:" superClass="com.qnx.qcc.option.runtime"/>
 							<targetPlatform archList="all" binaryParser="com.qnx.tools.ide.qde.core.QDEBynaryParser" id="com.qnx.qcc.targetPlatform.484829199" osList="all" superClass="com.qnx.qcc.targetPlatform"/>
-							<builder autoBuildTarget="Device-Profile" enableAutoBuild="true" id="com.qnx.qcc.toolChain.1964792373.924516556" incrementalBuildTarget="Device-Profile" managedBuildOn="false" name="device-profile builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.device-profile"/>
+							<builder autoBuildTarget="Device-Profile" enableAutoBuild="true" id="com.qnx.qcc.toolChain.1964792373.924516556" incrementalBuildTarget="Device-Profile" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="device-profile builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.device-profile"/>
 							<tool id="com.qnx.qcc.tool.compiler.1198501665" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
-								<option id="com.qnx.qcc.option.compiler.optlevel.1464964069" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
+								<option id="com.qnx.qcc.option.compiler.optlevel.1464964069" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<inputType id="com.qnx.qcc.inputType.compiler.1562379976" superClass="com.qnx.qcc.inputType.compiler"/>
 							</tool>
 							<tool id="com.qnx.qcc.tool.assembler.1428117002" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">
@@ -126,7 +126,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildProperties="" id="com.qnx.qcc.toolChain.2132813977" name="Simulator-Debug" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactName="${ProjName}" buildProperties="" description="" id="com.qnx.qcc.toolChain.2132813977" name="Simulator-Debug" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="com.qnx.qcc.toolChain.2132813977.1670768267" name="/" resourcePath="">
 						<toolChain id="com.qnx.qcc.toolChain.2116986539" name="com.qnx.qcc.toolChain" superClass="com.qnx.qcc.toolChain">
 							<option id="com.qnx.qcc.option.os.1410085434" name="Target OS:" superClass="com.qnx.qcc.option.os"/>
@@ -134,9 +134,9 @@
 							<option id="com.qnx.qcc.option.compiler.1792431329" name="Compiler:" superClass="com.qnx.qcc.option.compiler"/>
 							<option id="com.qnx.qcc.option.runtime.919228755" name="Runtime:" superClass="com.qnx.qcc.option.runtime"/>
 							<targetPlatform archList="all" binaryParser="com.qnx.tools.ide.qde.core.QDEBynaryParser" id="com.qnx.qcc.targetPlatform.1582165852" osList="all" superClass="com.qnx.qcc.targetPlatform"/>
-							<builder autoBuildTarget="Simulator-Debug" enableAutoBuild="true" id="com.qnx.qcc.toolChain.2132813977.913837503" incrementalBuildTarget="Simulator-Debug" managedBuildOn="false" name="simulator-debug builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.simulator-debug"/>
+							<builder autoBuildTarget="Simulator-Debug" enableAutoBuild="true" id="com.qnx.qcc.toolChain.2132813977.913837503" incrementalBuildTarget="Simulator-Debug" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="simulator-debug builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="qml.simulator-debug"/>
 							<tool id="com.qnx.qcc.tool.compiler.901607705" name="QCC Compiler" superClass="com.qnx.qcc.tool.compiler">
-								<option id="com.qnx.qcc.option.compiler.optlevel.1717178805" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
+								<option id="com.qnx.qcc.option.compiler.optlevel.1717178805" name="Optimization Level" superClass="com.qnx.qcc.option.compiler.optlevel" value="com.qnx.qcc.option.compiler.optlevel.0" valueType="enumerated"/>
 								<inputType id="com.qnx.qcc.inputType.compiler.46134092" superClass="com.qnx.qcc.inputType.compiler"/>
 							</tool>
 							<tool id="com.qnx.qcc.tool.assembler.816673936" name="QCC Assembler" superClass="com.qnx.qcc.tool.assembler">

@@ -8,12 +8,6 @@
 #ifndef HEAPUSAGE_H_
 #define HEAPUSAGE_H_
 
-/*
- *
- * #include <src/Logger/HeapUsage/HeapUsage.h>
- *
- */
-
 #include <QObject>
 
 #include <sys/procfs.h>

@@ -7,6 +7,7 @@ CONFIG(release, debug|release) {
 }
 
 include(config.pri)
+INCLUDEPATH += ../../$${APP_NAME}/src
 
 LIBS += -lbb -lbbdata -lbbdevice -lbbplatform -lbbsystem
 QT += network
