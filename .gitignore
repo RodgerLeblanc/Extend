@@ -3,6 +3,8 @@
 */x86/
 */arm-p/
 */translations/*.qm
+*/translations/*.ts
+*/*.pri
 
 #Momentics settings
 .settings/
