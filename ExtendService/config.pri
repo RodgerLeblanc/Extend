@@ -37,6 +37,7 @@ simulator {
 config_pri_source_group1 {
     SOURCES += \
         $$quote($$BASEDIR/src/FolderCleaner/FolderCleaner.cpp) \
+        $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.cpp) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.cpp) \
         $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.cpp) \
         $$quote($$BASEDIR/src/Logger/Logger.cpp) \
@@ -50,6 +51,7 @@ config_pri_source_group1 {
         $$quote($$BASEDIR/src/Enums/FilePerimeter.h) \
         $$quote($$BASEDIR/src/Enums/FileType.h) \
         $$quote($$BASEDIR/src/FolderCleaner/FolderCleaner.h) \
+        $$quote($$BASEDIR/src/FolderWatcher/FolderWatcher.h) \
         $$quote($$BASEDIR/src/HeadlessCommunication/HeadlessCommunication.h) \
         $$quote($$BASEDIR/src/ImageFileSignatureChecker/ImageFileSignatureChecker.h) \
         $$quote($$BASEDIR/src/Logger/HeapUsage/HeapUsage.h) \
@@ -84,6 +86,11 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/FolderCleaner/*.cc) \
         $$quote($$BASEDIR/../src/FolderCleaner/*.cpp) \
         $$quote($$BASEDIR/../src/FolderCleaner/*.cxx) \
+        $$quote($$BASEDIR/../src/FolderWatcher/*.c) \
+        $$quote($$BASEDIR/../src/FolderWatcher/*.c++) \
+        $$quote($$BASEDIR/../src/FolderWatcher/*.cc) \
+        $$quote($$BASEDIR/../src/FolderWatcher/*.cpp) \
+        $$quote($$BASEDIR/../src/FolderWatcher/*.cxx) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.c) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.c++) \
         $$quote($$BASEDIR/../src/HeadlessCommunication/*.cc) \
@@ -124,6 +131,9 @@ lupdate_inclusion {
         $$quote($$BASEDIR/../src/Settings/*.cc) \
         $$quote($$BASEDIR/../src/Settings/*.cpp) \
         $$quote($$BASEDIR/../src/Settings/*.cxx) \
+        $$quote($$BASEDIR/..//*.qml) \
+        $$quote($$BASEDIR/..//*.js) \
+        $$quote($$BASEDIR/..//*.qs) \
         $$quote($$BASEDIR/../assets/*.qml) \
         $$quote($$BASEDIR/../assets/*.js) \
         $$quote($$BASEDIR/../assets/*.qs)
